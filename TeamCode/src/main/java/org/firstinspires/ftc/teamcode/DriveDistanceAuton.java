@@ -15,8 +15,11 @@ public class DriveDistanceAuton extends LinearOpMode{
 
         waitForStart();
 
-        int dist = (int)ConstantsAndCalculations.distanceToTicks(5);
+        int dist = (int)ConstantsAndCalculations.distanceToTicks(25);
         float power = 1;
         robot.driveDistance(dist, dist, power);
+        while(opModeIsActive()) robot.activeOpmode = true;
+        robot.activeOpmode = false;
+        robot.stop();
     }
 }

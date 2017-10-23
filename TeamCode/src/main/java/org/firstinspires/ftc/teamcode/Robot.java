@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.*;
 
 import org.firstinspires.ftc.robotcore.external.Const;
 
 public class Robot {
     //drive motors
-    private DcMotor leftFront, leftBack, rightFront, rightBack;
+    public DcMotor leftFront, leftBack, rightFront, rightBack;
+    public boolean activeOpmode;
 
     //jewel mechanism
     private Servo jewel;
@@ -20,13 +23,13 @@ public class Robot {
 
     public void init(HardwareMap map){
         //drivetrain
-        leftFront = map.dcMotor.get("frontRight");
-        leftBack = map.dcMotor.get("frontLeft");
-        rightFront = map.dcMotor.get("backRight");
-        rightBack = map.dcMotor.get("backLeft");
+        leftFront = map.dcMotor.get("2");
+        rightFront = map.dcMotor.get("1");
+        leftBack = map.dcMotor.get("4"); // changed originally rightFront
+        rightBack = map.dcMotor.get("3");
 
         //jewelMechanism
-        jewel = map.servo.get("jewel");//TODO // FIXME: 10/21/17
+        //jewel = map.servo.get("jewel");//TODO // FIXME: 10/21/17
 
         resetMotorDirection();
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -53,8 +56,8 @@ public class Robot {
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         //set right motors in reverse (configuration of motors on robot)
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
     }
 
     public void setDrivePower(double left, double right) {
@@ -98,7 +101,7 @@ public class Robot {
             leftError = left - (leftFront.getCurrentPosition() + leftBack.getCurrentPosition()) / 2.0;
             rightError = left - (rightFront.getCurrentPosition() + rightBack.getCurrentPosition()) / 2.0;
             setDrivePower(ConstantsAndCalculations.P_CONSTANT_DRIVING*leftError, ConstantsAndCalculations.P_CONSTANT_DRIVING*rightError);
-        }while(Math.abs(leftError) > ConstantsAndCalculations.DRIVE_TOLERANCE );
+        }while(Math.abs(leftError) > ConstantsAndCalculations.DRIVE_TOLERANCE || this.activeOpmode);
 
         this.stop();
     }
