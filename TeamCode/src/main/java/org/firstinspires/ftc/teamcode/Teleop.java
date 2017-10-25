@@ -23,10 +23,7 @@ public class Teleop extends OpMode {
 
     public void loop(){
 
-        robot.leftBack.setPower(gamepad1.left_trigger);
-        robot.leftFront.setPower(.55*gamepad1.left_trigger); // fixed
-        robot.rightBack.setPower(.55*-gamepad1.right_trigger);
-        robot.rightFront.setPower(.55*-gamepad1.right_trigger);
+       robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
         if(gamepad1.a){
             robot.toggleJewel();
