@@ -8,14 +8,16 @@ import org.firstinspires.ftc.robotcore.external.Const;
 
 public class Robot {
     //drive motors
-    public DcMotor leftFront, leftBack, rightFront, rightBack;
+    public DcMotor leftFront, leftBack, rightFront, rightBack, linearSlide;
     public boolean activeOpmode;
 
     //jewel mechanism
-    private Servo jewel;
-    private ColorSensor color;
+    public Servo jewel;
+    public ColorSensor color;
     private boolean jewelup = true;
 
+    public Servo glyphLeft;
+    private boolean glyphOpen = true;
 
     public Robot(HardwareMap map){
         init(map);
@@ -28,8 +30,13 @@ public class Robot {
         leftBack = map.dcMotor.get("4"); // changed originally rightFront
         rightBack = map.dcMotor.get("3");
 
+        //operator
+        linearSlide = map.dcMotor.get("LinearSlide");
+        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //jewelMechanism
-        //jewel = map.servo.get("jewel");//TODO // FIXME: 10/21/17
+        jewel = map.servo.get("jewel");//TODO // FIXME: 10/21/17
+        glyphLeft = map.servo.get("glyphLeft");
 
 //        resetMotorDirection();
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -92,7 +99,13 @@ public class Robot {
         leftBack.setTargetPosition(left);
         rightFront.setTargetPosition(right);
         rightBack.setTargetPosition(right);
-        setDrivePower(power);
+
+        //setDrivePower(power);
+
+        leftFront.setPower(power);
+        leftBack.setPower(power);
+        rightFront.setPower(power);
+        rightBack.setPower(power);
     }
 
 
@@ -135,5 +148,15 @@ public class Robot {
         jewelup = !jewelup;
     }
 
+    //Glyph Servo
+    public void toggleGlyph(){
+        if(glyphOpen){
+            glyphLeft.setPosition(1);
+        }else{
+            glyphLeft.setPosition(0);
+        }
+
+        glyphOpen = !glyphOpen;
+    }
 
 }

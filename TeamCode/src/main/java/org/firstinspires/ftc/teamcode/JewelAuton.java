@@ -51,7 +51,7 @@ public class JewelAuton extends LinearOpMode {
             telemetry.addData("Is Red", str);
             telemetry.update();
 
-            // if (time.time() > 2) break;
+            // if (time.time() > 5) break;
         }
 
         /*

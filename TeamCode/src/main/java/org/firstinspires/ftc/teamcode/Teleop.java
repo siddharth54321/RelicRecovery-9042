@@ -25,10 +25,11 @@ public class Teleop extends OpMode {
 
        robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
-        if(gamepad1.a){
+        if(gamepad2.a){
             robot.toggleJewel();
-
         }
+
+        robot.linearSlide.setPower(gamepad2.left_stick_y * .1);
 
         telemetry.addData("Left Stick", gamepad1.left_stick_y);
         telemetry.addData("Right Stick", gamepad1.right_stick_y);
