@@ -13,16 +13,18 @@ public class DriveDistanceAuton extends LinearOpMode{
         robot.stop();
 
         waitForStart();
-        robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
         int dist = (int)ConstantsAndCalculations.distanceToTicks(25);
         float power = 1;
-        robot.driveDistance(dist, -dist, power);
+
+        robot.driveDistance(-dist, dist, power);
         while(opModeIsActive()){
             robot.activeOpmode = true;
             telemetry.addData("left Position", (robot.leftFront.getCurrentPosition()+robot.leftBack.getCurrentPosition())/2.0);
             telemetry.addData("right Position", (robot.rightFront.getCurrentPosition()+robot.rightBack.getCurrentPosition())/2.0);
             telemetry.addData("target Position", dist);
             telemetry.update();
+
         }
         robot.activeOpmode = false;
         robot.stop();

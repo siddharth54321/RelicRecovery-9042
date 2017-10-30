@@ -2,16 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "Sensor: Jewel Auton", group = "Sensor")
-public class JewelAuton extends LinearOpMode {
+@Autonomous(name = "Red: Jewel Auton", group = "Sensor")
+public class JewelAutonRed extends LinearOpMode {
 
     ColorSensor sensorColor;
     Robot robot;
@@ -27,15 +27,18 @@ public class JewelAuton extends LinearOpMode {
         final double SCALE_FACTOR = 255;
         waitForStart();
 
-        robot.toggleJewel();
 
-        boolean red;
+
+
+        boolean red = false;
 
         ElapsedTime time = new ElapsedTime();
         time.startTime();
         String str = "init";
 
         while (opModeIsActive()) {
+            robot.jewel.setPosition(0);
+
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR), (int) (sensorColor.green() * SCALE_FACTOR), (int) (sensorColor.blue() * SCALE_FACTOR), hsvValues);
 
             red = hsvValues[0] < 25 || hsvValues[0] > 330;
@@ -49,12 +52,13 @@ public class JewelAuton extends LinearOpMode {
             telemetry.addData("Blue ", sensorColor.blue());
             telemetry.addData("Hue", hsvValues[0]);
             telemetry.addData("Is Red", str);
+            telemetry.addData("Servo Position", robot.jewel.getPosition());
             telemetry.update();
 
-            // if (time.time() > 5) break;
+            if (time.time() > 5) break;
         }
 
-        /*
+
         telemetry.addData("Detected", str);
         telemetry.update();
 
@@ -62,10 +66,16 @@ public class JewelAuton extends LinearOpMode {
         time.reset();
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()) {
-            robot.setDrivePower(.20f);
+            robot.setDrivePower(red? -.20f: .20f);
             if(time.time()>2) break;
+
+            telemetry.addData("Detected", str);
+            telemetry.update();
         }
-        */
+
+        while(opModeIsActive()) {
+            robot.jewel.setPosition(1);
+        }
     }
 }
 

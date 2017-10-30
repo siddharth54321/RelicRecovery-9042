@@ -14,7 +14,7 @@ public class Robot {
     //jewel mechanism
     public Servo jewel;
     public ColorSensor color;
-    private boolean jewelup = true;
+    public boolean jewelup = true;
 
     public Servo glyphLeft;
     private boolean glyphOpen = true;
@@ -31,12 +31,12 @@ public class Robot {
         rightBack = map.dcMotor.get("3");
 
         //operator
-        linearSlide = map.dcMotor.get("LinearSlide");
-        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        linearSlide = map.dcMotor.get("LinearSlide");
+//        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //jewelMechanism
-        jewel = map.servo.get("jewel");//TODO // FIXME: 10/21/17
-        glyphLeft = map.servo.get("glyphLeft");
+        jewel = map.servo.get("Jewel");//TODO // FIXME: 10/21/17
+//        glyphLeft = map.servo.get("glyphLeft");
 
 //        resetMotorDirection();
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -100,11 +100,9 @@ public class Robot {
         rightFront.setTargetPosition(right);
         rightBack.setTargetPosition(right);
 
-        //setDrivePower(power);
-
-        leftFront.setPower(power);
-        leftBack.setPower(power);
-        rightFront.setPower(power);
+        leftFront.setPower(.55*power);
+        leftBack.setPower(.55*power);
+        rightFront.setPower(.55*power);
         rightBack.setPower(power);
     }
 
@@ -139,10 +137,10 @@ public class Robot {
 
     //Jewel Mech
     public void toggleJewel(){
-        if(jewelup){
-            jewel.setPosition(1);
-        }else{
+        if(jewel.getPosition() == 1){
             jewel.setPosition(0);
+        }else{
+            jewel.setPosition(1);
         }
 
         jewelup = !jewelup;
