@@ -16,16 +16,25 @@ public class ParkAuton extends LinearOpMode{
 
         ElapsedTime time = new ElapsedTime();
         time.reset();
+
+        robot.setDrivePower(.5f);
         while(time.seconds() < 3){
-            robot.setDrivePower(1);
+            telemetry.addData("Time", time.seconds());
         }
 
         robot.setDrivePower(0);
-
-
-        while(time.seconds() < 0.3){
-            robot.setDrivePower(-1);
+        time.reset();
+        while(time.seconds() < 0.3) {
+            telemetry.addData("Stopped robot: ", "robot");
         }
+
+        time.reset();
+        robot.setDrivePower(-.5f);
+        while(time.seconds() < 0.3) {
+            telemetry.addData("Time", time.seconds());
+        }
+
+        robot.setDrivePower(0);
     }
 
 }

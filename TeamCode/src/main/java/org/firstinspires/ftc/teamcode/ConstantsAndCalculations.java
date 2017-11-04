@@ -8,6 +8,8 @@ public class ConstantsAndCalculations {
     public static final float DRIVE_TOLERANCE = 100;
     public static final float P_CONSTANT_DRIVING = 1;
 
+    public static final double SMOOTH_VALUE = .01;
+
     //value in inches
     public static float distanceToTicks(float dist){
         float circumference = (float)Math.PI* WHEEL_DIAMETER;

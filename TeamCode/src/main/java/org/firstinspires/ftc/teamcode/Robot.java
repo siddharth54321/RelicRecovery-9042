@@ -59,15 +59,6 @@ public class Robot {
         rightBack.setZeroPowerBehavior(behav);
     }
 
-//    public void resetMotorDirection(){
-//        leftFront.setDirection(DcMotor.Direction.FORWARD);
-//        leftBack.setDirection(DcMotor.Direction.FORWARD);
-//        //set right motors in reverse (configuration of motors on robot)
-//        rightBack.setDirection(DcMotor.Direction.FORWARD);
-//        rightFront.setDirection(DcMotor.Direction.FORWARD);
-//    }
-
-
     public void setDrivePower(double left, double right) {
         left = rangeKeep(left, -1, 1);
         right = rangeKeep(right, -1, 1);
@@ -79,8 +70,25 @@ public class Robot {
 
     }
 
+    public double[] getPower(){
+        return new double[]{leftBack.getPower(), leftFront.getPower(), rightBack.getPower(), rightFront.getPower()};
+    }
+
+    public void smoothDrive(double left, double right){
+        double smoothL, smoothR;
+
+        double[] power = getPower();
+        if(left < power[1]) smoothL = power[1] + ConstantsAndCalculations.SMOOTH_VALUE;
+        else smoothL = power[1] - ConstantsAndCalculations.SMOOTH_VALUE;
+
+        if(right < (power[2]+power[3])/2.0) smoothR = (power[2]+power[3])/2.0 + ConstantsAndCalculations.SMOOTH_VALUE;
+        else smoothR = (power[2]+power[3])/2.0 - ConstantsAndCalculations.SMOOTH_VALUE;
+
+        setDrivePower(smoothL, smoothR);
+    }
+
     public void setDrivePower(float val){
-        setDrivePower(val,val);
+        setDrivePower(-val,-val);
     }
 
     public void stop(){
