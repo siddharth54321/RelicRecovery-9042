@@ -4,9 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.ConstantsAndCalculations;
-import org.firstinspires.ftc.teamcode.Robot;
-
 @Autonomous(name = "Tick Counter test", group = "Test")
 
 public class TickCounter extends LinearOpMode {

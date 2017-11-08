@@ -16,7 +16,7 @@ public class DriveDistanceAuton extends LinearOpMode{
 
         waitForStart();
         robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
-        int dist = (int)ConstantsAndCalculations.distanceToTicks(25);
+        int dist = (int) RobotMap.distanceToTicks(25);
         float power = 1;
 
         robot.driveDistance(-dist, dist, power);

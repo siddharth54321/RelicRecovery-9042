@@ -14,6 +14,8 @@ public class ParkAuton extends LinearOpMode{
     public void runOpMode(){
         Robot robot = new Robot(this.hardwareMap);
 
+        waitForStart();
+
         ElapsedTime time = new ElapsedTime();
         time.reset();
 
