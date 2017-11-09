@@ -39,9 +39,8 @@ public class Robot {
 
         //jewelMechanism
         jewel = map.servo.get("Jewel");//TODO // FIXME: 10/21/17
-//        glyphLeft = map.servo.get("glyphLeft");
+        glyphLeft = map.servo.get("glyphLeft");
 
-//        resetMotorDirection();
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ElapsedTime time = new ElapsedTime();

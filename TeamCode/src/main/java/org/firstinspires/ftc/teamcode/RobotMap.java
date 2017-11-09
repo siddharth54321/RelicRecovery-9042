@@ -8,7 +8,7 @@ public class RobotMap {
     public static final float DRIVE_TOLERANCE = 100;
     public static final float P_CONSTANT_DRIVING = 1;
 
-    public static final double INCREMENT = .05;
+    public static double INCREMENT = .05;
 
     //value in inches
     public static float distanceToTicks(float dist){
@@ -19,7 +19,7 @@ public class RobotMap {
     }
 
     public static double smoothSpeed(double currentSpeed, double oldSpeed, double increment) {
-        double finalSpeed;
+        double finalSpeed; //changed speed
         if (currentSpeed < oldSpeed - increment) {
             finalSpeed = oldSpeed - increment;
         } else if (currentSpeed > oldSpeed + increment) {

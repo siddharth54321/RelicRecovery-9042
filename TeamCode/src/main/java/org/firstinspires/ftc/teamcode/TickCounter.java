@@ -19,7 +19,7 @@ public class TickCounter extends LinearOpMode {
         while(opModeIsActive()){
             robot.activeOpmode = true;
             telemetry.addData("left Position", (robot.leftFront.getCurrentPosition()+robot.leftBack.getCurrentPosition())/2.0);
-            telemetry.addData("right Position", (robot.rightFront.getCurrentPosition()+robot.rightBack.getCurrentPosition())/2.0);;
+            telemetry.addData("right Position", (robot.rightFront.getCurrentPosition()+robot.rightBack.getCurrentPosition())/2.0);
             telemetry.update();
         }
         robot.activeOpmode = false;

@@ -53,7 +53,13 @@ public class Teleop extends OpMode {
             robot.setDrivePower(.3f, -.3f);
         }else{
             robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
-            //robot.smoothDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            robot.smoothDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+        }
+
+        if(gamepad1.dpad_up){
+            RobotMap.INCREMENT += .1;
+        }else if(gamepad1.dpad_down){
+            RobotMap.INCREMENT -= .1;
         }
 
         telemetry.addData("Left Stick", gamepad1.left_stick_y);
@@ -65,6 +71,7 @@ public class Teleop extends OpMode {
         telemetry.addData("Right Power Back", robot.rightBack.getPower());
 
         telemetry.addData("Jewel Position", robot.jewel.getPosition());
+        telemetry.addData("Smooth Increment:", RobotMap.INCREMENT);
         telemetry.update();
     }
     public void stop(){
@@ -72,4 +79,3 @@ public class Teleop extends OpMode {
     }
 
 }
-
