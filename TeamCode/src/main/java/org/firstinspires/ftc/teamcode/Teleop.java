@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class Teleop extends OpMode {
     //gamepad 1 is driver
     Robot robot;
+    boolean smooth = false;
 
     public void init(){
         robot = new Robot(this.hardwareMap);
@@ -28,15 +29,30 @@ public class Teleop extends OpMode {
         }
 
         if(gamepad2.y){
-            robot.linearSlide.setPower(0.5); //coarse adjustment
+            robot.linearSlideLeft.setPower(0.5); //coarse adjustment
+            robot.linearSlideRight.setPower(0.5); //coarse adjustment
         }else if(gamepad2.a){
-            robot.linearSlide.setPower(-0.5); //coarse adjustment
+            robot.linearSlideLeft.setPower(-0.5); //coarse adjustment
+            robot.linearSlideRight.setPower(-0.5); //coarse adjustment
         }else if(gamepad2.x){
-            robot.linearSlide.setPower(0.2); //fine adjustment
+            robot.linearSlideLeft.setPower(0.2); //fine adjustment
+            robot.linearSlideRight.setPower(0.2); //fine adjustment
         }else if(gamepad2.b){
-            robot.linearSlide.setPower(-0.2); //fine adjustment
+            robot.linearSlideLeft.setPower(-0.2); //fine adjustment
+            robot.linearSlideRight.setPower(-0.2); //fine adjustment
         }else{
-            robot.linearSlide.setPower(0);
+            robot.linearSlideLeft.setPower(0);
+            robot.linearSlideRight.setPower(0);
+        }
+
+
+
+        if(gamepad2.right_bumper){
+            robot.glyphLeft.setPosition(1);
+            robot.glyphRight.setPosition(0);
+        }else if(gamepad2.left_bumper){
+            robot.glyphLeft.setPosition(0);
+            robot.glyphRight.setPosition(1);
         }
 
         //driver
@@ -52,14 +68,12 @@ public class Teleop extends OpMode {
         else if(gamepad1.x){
             robot.setDrivePower(.3f, -.3f);
         }else{
-            robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
-            robot.smoothDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            if(smooth) robot.smoothDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            else robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
         }
 
-        if(gamepad1.dpad_up){
-            RobotMap.INCREMENT += .1;
-        }else if(gamepad1.dpad_down){
-            RobotMap.INCREMENT -= .1;
+        if(gamepad2.dpad_right){
+            smooth = !smooth;
         }
 
         telemetry.addData("Left Stick", gamepad1.left_stick_y);
@@ -69,6 +83,12 @@ public class Teleop extends OpMode {
         telemetry.addData("Left Power Back", robot.leftBack.getPower());
         telemetry.addData("Right Power Front", robot.rightFront.getPower());
         telemetry.addData("Right Power Back", robot.rightBack.getPower());
+
+        telemetry.addData("Left Slide Power", robot.linearSlideLeft.getPower());
+        telemetry.addData("Right Slide Power", robot.linearSlideRight.getPower());
+
+        telemetry.addData("Left Servo Position", robot.glyphLeft.getPosition());
+        telemetry.addData("Right Servo Position", robot.glyphRight.getPosition());
 
         telemetry.addData("Jewel Position", robot.jewel.getPosition());
         telemetry.addData("Smooth Increment:", RobotMap.INCREMENT);

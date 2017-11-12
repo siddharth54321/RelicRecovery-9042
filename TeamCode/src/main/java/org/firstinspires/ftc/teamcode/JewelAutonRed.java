@@ -37,7 +37,7 @@ public class JewelAutonRed extends LinearOpMode {
         String str = "init";
 
         while (opModeIsActive()) {
-            robot.jewel.setPosition(0);
+            robot.jewel.setPosition(1);
 
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR), (int) (sensorColor.green() * SCALE_FACTOR), (int) (sensorColor.blue() * SCALE_FACTOR), hsvValues);
 
@@ -67,14 +67,23 @@ public class JewelAutonRed extends LinearOpMode {
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()) {
             robot.setDrivePower(red? -.20f: .20f);
-            if(time.time()>2) break;
+            if(time.time()>5) break;
 
             telemetry.addData("Detected", str);
             telemetry.update();
         }
+        robot.setDrivePower(0);
 
-        while(opModeIsActive()) {
-            robot.jewel.setPosition(1);
+        time.reset();
+        robot.setDrivePower(red? .5f:-.5f);
+        while(time.seconds() < 0.3) {
+            telemetry.addData("Time", time.seconds());
+        }
+
+        robot.setDrivePower(0);
+
+        while(opModeIsActive()){
+            robot.jewel.setPosition(0);
         }
     }
 }

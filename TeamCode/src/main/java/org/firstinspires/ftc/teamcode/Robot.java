@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Robot {
     //drive motors
-    public DcMotor leftFront, leftBack, rightFront, rightBack, linearSlide;
+    public DcMotor leftFront, leftBack, rightFront, rightBack;
+    public DcMotor linearSlideLeft, linearSlideRight;
     public boolean activeOpmode;
 
     //jewel mechanism
@@ -17,6 +18,7 @@ public class Robot {
     public boolean jewelup = true;
 
     public Servo glyphLeft;
+    public Servo glyphRight;
     private boolean glyphOpen = true;
 
     public double oldLeftSpeed = 0, oldRightSpeed = 0;
@@ -26,6 +28,7 @@ public class Robot {
     }
 
     public void init(HardwareMap map) {
+        RobotMap.INCREMENT = 0.1;
         //drivetrain
         leftFront = map.dcMotor.get("2");
         rightFront = map.dcMotor.get("1");
@@ -34,24 +37,27 @@ public class Robot {
 
 
         //operator
-        linearSlide = map.dcMotor.get("LinearSlide");
-        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideLeft = map.dcMotor.get("slideLeft");
+        linearSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideRight = map.dcMotor.get("slideRight");
+        linearSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //jewelMechanism
         jewel = map.servo.get("Jewel");//TODO // FIXME: 10/21/17
         glyphLeft = map.servo.get("glyphLeft");
+        glyphRight = map.servo.get("glyphRight");
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ElapsedTime time = new ElapsedTime();
         while (time.seconds() < 2) {
 
         }
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        linearSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     //Driving Methods
@@ -164,9 +170,11 @@ public class Robot {
     //Glyph Servo
     public void toggleGlyph() {
         if (glyphOpen) {
-            glyphLeft.setPosition(1);
+            glyphLeft.setPosition(0.5);
+            glyphRight.setPosition(0.5);
         } else {
             glyphLeft.setPosition(0);
+            glyphRight.setPosition(1);
         }
 
         glyphOpen = !glyphOpen;
