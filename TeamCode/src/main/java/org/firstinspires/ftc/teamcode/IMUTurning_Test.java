@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -44,39 +43,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.util.Arrays;
 import java.util.Locale;
 
-/**
- * {@link SensorBNO055IMU} gives a short demo on how to use the BNO055 Inertial Motion Unit (IMU) from AdaFruit.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- *
- * @see <a href="http://www.adafruit.com/products/2472">Adafruit IMU</a>
- */
-@Autonomous(name = "Sensor: BNO055 IMU", group = "Sensor")
-public class SensorBNO055IMU extends LinearOpMode
+@Autonomous(name = "Turn 90 test", group = "Sensor")
+public class IMUTurning_Test extends LinearOpMode
     {
-    //----------------------------------------------------------------------------------------------
-    // State
-    //----------------------------------------------------------------------------------------------
 
     // The IMU sensor object
     BNO055IMU imu;
 
-    // State used for updating telemetry
+    Robot robot;
+
     Orientation angles;
     Acceleration gravity;
 
-    //----------------------------------------------------------------------------------------------
-    // Main logic
-    //----------------------------------------------------------------------------------------------
 
     @Override public void runOpMode() {
-
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -90,6 +73,7 @@ public class SensorBNO055IMU extends LinearOpMode
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        robot = new Robot(this.hardwareMap);
 
         // Set up our telemetry dashboard
         composeTelemetry();
@@ -100,17 +84,30 @@ public class SensorBNO055IMU extends LinearOpMode
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
+        double target = imu.getAngularOrientation().firstAngle + 90;//heading
+
+        double error = target- imu.getAngularOrientation().firstAngle;
         // Loop and update the dashboard
-        while (opModeIsActive()) {
+        while (opModeIsActive() && error >= RobotMap.TURN_TOLERANCE) {
+            error = target- imu.getAngularOrientation().firstAngle;
+            telemetry.addData("Heading",  imu.getAngularOrientation().firstAngle);
+            telemetry.addData("Error",  error);
+            telemetry.addData("Left speed", Arrays.toString(robot.getPower()));
             telemetry.update();
 
+            robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
 
+        }
+        while(opModeIsActive()){
+            robot.stop();
+            error = target- imu.getAngularOrientation().firstAngle;
+            telemetry.addData("Heading",  imu.getAngularOrientation().firstAngle);
+            telemetry.addData("Error",  error);
+            telemetry.addData("Left speed", Arrays.toString(robot.getPower()));
+            telemetry.update();
         }
     }
 
-    //----------------------------------------------------------------------------------------------
-    // Telemetry Configuration
-    //----------------------------------------------------------------------------------------------
 
     void composeTelemetry() {
 
@@ -182,4 +179,6 @@ public class SensorBNO055IMU extends LinearOpMode
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
+
 }

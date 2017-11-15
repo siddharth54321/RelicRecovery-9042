@@ -48,10 +48,7 @@ public class Robot {
         glyphRight = map.servo.get("glyphRight");
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ElapsedTime time = new ElapsedTime();
-        while (time.seconds() < 2) {
 
-        }
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
