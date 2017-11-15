@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Disabled
 @Autonomous(name = "Driving Distance test", group = "Test")
 public class DriveDistanceAuton extends LinearOpMode{
 
@@ -15,7 +14,7 @@ public class DriveDistanceAuton extends LinearOpMode{
         robot.stop();
 
         waitForStart();
-        robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         int dist = (int) RobotMap.distanceToTicks(25);
         float power = 1;
 

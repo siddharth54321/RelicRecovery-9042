@@ -84,7 +84,8 @@ public class IMUTurning_Test extends LinearOpMode
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        double target = imu.getAngularOrientation().firstAngle + 90;//heading
+        //TODO figure out why there is a 13 degree error
+        double target = imu.getAngularOrientation().firstAngle + 90-13;//heading
 
         double error = target- imu.getAngularOrientation().firstAngle;
         // Loop and update the dashboard
