@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Robot {
     //drive motors
     public DcMotor leftFront, leftBack, rightFront, rightBack;
@@ -81,7 +83,7 @@ public class Robot {
         right = rangeKeep(right, -1, 1);
 
         leftBack.setPower(left);
-        leftFront.setPower(left); // fixed to be 55 percent power
+        leftFront.setPower(left);
         rightBack.setPower(-right);
         rightFront.setPower(-right);
 
@@ -105,46 +107,49 @@ public class Robot {
         setDrivePower(0);
     }
 
-
-    /**
-     * @param left  right target in ticks
-     * @param right right target in ticks
-     * @param power initial power
-     */
-    public void driveDistance(int left, int right, float power) {
-        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setTargetPosition(left);
-        leftBack.setTargetPosition(left);
-        rightFront.setTargetPosition(right);
-        rightBack.setTargetPosition(right);
-
-        leftFront.setPower(.55 * power);
-        leftBack.setPower(.55 * power);
-        rightFront.setPower(.55 * power);
-        rightBack.setPower(power);
-    }
-
-
-//    public void driveDistance(int left, int right, float power){
-//        double leftError;
-//        double rightError;
-//        do {
-//            if (!this.activeOpmode) {
-//                break;
-//            }
-//            leftError = left - (leftFront.getCurrentPosition() + leftBack.getCurrentPosition()) / 2.0;
-//            rightError = right - (rightFront.getCurrentPosition() + rightBack.getCurrentPosition()) / 2.0;
-//            double leftP = RobotMap.P_CONSTANT_DRIVING*leftError;
-//            double rightP = RobotMap.P_CONSTANT_DRIVING*rightError;
+//    public void driveDistance(int dist, float power) {
+//        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        leftFront.setTargetPosition(dist);
+//        leftBack.setTargetPosition(dist);
+//        rightFront.setTargetPosition(dist);
+//        rightBack.setTargetPosition(dist);
 //
-//            leftBack.setPower(leftP);
-//            leftFront.setPower(.55*leftP); // fixed to be 55 percent power
-//            rightBack.setPower(.55*-rightP);
-//            rightFront.setPower(.55*-rightP);
-//        }while(Math.abs(leftError) > RobotMap.DRIVE_TOLERANCE || Math.abs(rightError) > RobotMap.DRIVE_TOLERANCE);
-//
-//        this.stop();
+//        leftFront.setPower(.55 * power);
+//        leftBack.setPower(.55 * power);
+//        rightFront.setPower(.55 * power);
+//        rightBack.setPower(power);
 //    }
+
+    double leftError;
+    double rightError;
+    double leftTarget;
+    double rightTarget;
+    double powerD;
+
+    public void driveDistance(int dist, float power){
+
+        leftTarget = leftFront.getCurrentPosition()+ dist;
+        rightTarget = rightFront.getCurrentPosition()+ dist;
+
+        leftError = dist - (leftFront.getCurrentPosition());
+        rightError = dist - (rightFront.getCurrentPosition());
+        while(activeOpmode) {
+            if(Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE) break;
+            else if(Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE) break;
+            else{
+                powerD = RobotMap.P_CONSTANT_DRIVING*leftError;
+                leftError = dist - (leftFront.getCurrentPosition());
+                rightError = dist - (rightFront.getCurrentPosition());
+
+                leftBack.setPower(RobotMap.P_CONSTANT_DRIVING*leftError);
+                leftFront.setPower(RobotMap.P_CONSTANT_DRIVING*leftError);
+                rightBack.setPower(-RobotMap.P_CONSTANT_DRIVING*rightError);
+                rightFront.setPower(-RobotMap.P_CONSTANT_DRIVING*rightError);
+            }
+        }
+
+        this.stop();
+    }
 
     private double rangeKeep(double x, double min, double max) {
         if (x < min) return min;
