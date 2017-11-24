@@ -87,6 +87,7 @@ public class Robot {
         rightBack.setPower(-right);
         rightFront.setPower(-right);
 
+
     }
 
     public double[] getPower() {
@@ -124,32 +125,42 @@ public class Robot {
     double rightError;
     double leftTarget;
     double rightTarget;
-    double powerD;
+    double powerD_L, powerD_R;
 
-    public void driveDistance(int dist, float power){
+    public void driveDistance(float dist){
 
         leftTarget = leftFront.getCurrentPosition()+ dist;
         rightTarget = rightFront.getCurrentPosition()+ dist;
 
-        leftError = dist - (leftFront.getCurrentPosition());
-        rightError = dist - (rightFront.getCurrentPosition());
+        leftError = leftTarget - (leftFront.getCurrentPosition());
+        rightError = rightTarget - (rightFront.getCurrentPosition());
         while(activeOpmode) {
-            if(Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE) break;
-            else if(Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE) break;
-            else{
-                powerD = RobotMap.P_CONSTANT_DRIVING*leftError;
-                leftError = dist - (leftFront.getCurrentPosition());
-                rightError = dist - (rightFront.getCurrentPosition());
+            if(Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE) break;
+            leftError = leftTarget - (leftFront.getCurrentPosition());
+            rightError = rightTarget - (rightFront.getCurrentPosition());
+            powerD_L = RobotMap.P_CONSTANT_DRIVING*leftError;
+            powerD_R = -RobotMap.P_CONSTANT_DRIVING*rightError;
 
-                leftBack.setPower(RobotMap.P_CONSTANT_DRIVING*leftError);
-                leftFront.setPower(RobotMap.P_CONSTANT_DRIVING*leftError);
-                rightBack.setPower(-RobotMap.P_CONSTANT_DRIVING*rightError);
-                rightFront.setPower(-RobotMap.P_CONSTANT_DRIVING*rightError);
-            }
+                leftBack.setPower(powerD_L);
+                leftFront.setPower(powerD_L);
+                rightBack.setPower(powerD_R);
+                rightFront.setPower(powerD_R);
+//            setDrivePower(powerD_L, powerD_R);
         }
 
         this.stop();
     }
+
+//    public void driveDistance(int dist, float power){
+//        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        leftFront.setTargetPosition(leftFront.getCurrentPosition()+dist);
+//        leftBack.setTargetPosition(leftBack.getCurrentPosition()+dist);
+//        leftFront.setTargetPosition(leftFront.getCurrentPosition()+dist);
+//        leftBack.setTargetPosition(leftBack.getCurrentPosition()+dist);
+//
+//        setDrivePower(power);
+//    }
 
     private double rangeKeep(double x, double min, double max) {
         if (x < min) return min;

@@ -91,7 +91,7 @@ public class Teleop extends OpMode {
         telemetry.addData("Right Servo Position", robot.glyphRight.getPosition());
 
         telemetry.addData("Jewel Position", robot.jewel.getPosition());
-        telemetry.addData("Smooth Increment:", RobotMap.INCREMENT);
+        telemetry.addData("Smooth: ", smooth);
         telemetry.update();
     }
     public void stop(){

@@ -17,23 +17,33 @@ public class DriveDistanceAuton extends LinearOpMode{
 
         waitForStart();
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        int dist = (int) RobotMap.distanceToTicks(5);
+        float dist = RobotMap.distanceToTicks(5);
 
         float power = 1;
 
-        robot.driveDistance(dist, power);
+        robot.driveDistance(dist);
 
 
         while(opModeIsActive()  ){
             robot.activeOpmode = true;
-            telemetry.addData("left Position", (robot.leftFront.getCurrentPosition()+robot.leftBack.getCurrentPosition())/2.0);
-            telemetry.addData("right Position", (robot.rightFront.getCurrentPosition()+robot.rightBack.getCurrentPosition())/2.0);
+            // 0
+            telemetry.addData("left Position", robot.leftFront.getCurrentPosition());
+            // 0
+            telemetry.addData("right Position", robot.rightFront.getCurrentPosition());
+            // 0.0,0.0,0.0,0.0
             telemetry.addData("Motor Power", Arrays.toString(robot.getPower()));
-            telemetry.addData("Motor Power", robot.powerD);
+            // 0.0, 0.0
+            telemetry.addData("Motor Power", robot.powerD_L +" " + robot.powerD_R);
+            // 8256
             telemetry.addData("target Position", dist);
+            // true
             telemetry.addData("Active opmode", robot.activeOpmode);
+            // 8256
             telemetry.addData("left Error", robot.leftError);
+            // 8256
             telemetry.addData("right Error", robot.rightError);
+            // false
+            telemetry.addData("Boolean Case", Math.abs(robot.leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(robot.rightError) < RobotMap.DRIVE_TOLERANCE);
             telemetry.update();
 
         }
