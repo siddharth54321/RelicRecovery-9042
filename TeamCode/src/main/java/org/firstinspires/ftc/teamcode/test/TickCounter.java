@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.utilities.Robot;
 
 @Autonomous(name = "Tick Counter test", group = "Test")
 
@@ -18,7 +20,7 @@ public class TickCounter extends LinearOpMode {
 
         while(opModeIsActive()){
             robot.activeOpmode = true;
-            telemetry.addData("left Position", (robot.leftFront.getCurrentPosition()+robot.leftBack.getCurrentPosition())/2.0);
+            telemetry.addData("left Position", robot.leftBack.getCurrentPosition());
             telemetry.addData("right Position", (robot.rightFront.getCurrentPosition()+robot.rightBack.getCurrentPosition())/2.0);
             telemetry.update();
         }

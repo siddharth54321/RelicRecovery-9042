@@ -1,27 +1,27 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.utilities;
 
+import android.util.Log;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.Arrays;
 
 public class Robot {
     //drive motors
     public DcMotor leftFront, leftBack, rightFront, rightBack;
-    public DcMotor linearSlideLeft, linearSlideRight;
     public boolean activeOpmode;
 
     //jewel mechanism
     public Servo jewel;
     public ColorSensor color;
     public boolean jewelup = true;
-
-    public Servo glyphLeft;
-    public Servo glyphRight;
-    private boolean glyphOpen = true;
 
     public double oldLeftSpeed = 0, oldRightSpeed = 0;
 
@@ -36,27 +36,11 @@ public class Robot {
         rightFront = map.dcMotor.get("1");
         leftBack = map.dcMotor.get("4"); // changed originally rightFront
         rightBack = map.dcMotor.get("3");
-
-
-        //operator
-        linearSlideLeft = map.dcMotor.get("slideLeft");
-        linearSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideRight = map.dcMotor.get("slideRight");
-        linearSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //jewelMechanism
-        jewel = map.servo.get("Jewel");//TODO // FIXME: 10/21/17
-        glyphLeft = map.servo.get("glyphLeft");
-        glyphRight = map.servo.get("glyphRight");
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     //Driving Methods
@@ -87,6 +71,7 @@ public class Robot {
         rightBack.setPower(-right);
         rightFront.setPower(-right);
 
+
     }
 
     public double[] getPower() {
@@ -107,49 +92,62 @@ public class Robot {
         setDrivePower(0);
     }
 
-//    public void driveDistance(int dist, float power) {
-//        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        leftFront.setTargetPosition(dist);
-//        leftBack.setTargetPosition(dist);
-//        rightFront.setTargetPosition(dist);
-//        rightBack.setTargetPosition(dist);
-//
-//        leftFront.setPower(.55 * power);
-//        leftBack.setPower(.55 * power);
-//        rightFront.setPower(.55 * power);
-//        rightBack.setPower(power);
-//    }
 
     double leftError;
     double rightError;
     double leftTarget;
     double rightTarget;
-    double powerD;
+    double powerD_L, powerD_R;
 
-    public void driveDistance(int dist, float power){
+    public void driveDistance(float dist, LinearOpMode mode){
 
         leftTarget = leftFront.getCurrentPosition()+ dist;
         rightTarget = rightFront.getCurrentPosition()+ dist;
 
-        leftError = dist - (leftFront.getCurrentPosition());
-        rightError = dist - (rightFront.getCurrentPosition());
-        while(activeOpmode) {
-            if(Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE) break;
-            else if(Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE) break;
-            else{
-                powerD = RobotMap.P_CONSTANT_DRIVING*leftError;
-                leftError = dist - (leftFront.getCurrentPosition());
-                rightError = dist - (rightFront.getCurrentPosition());
+        leftError = leftTarget - leftFront.getCurrentPosition();
+        rightError = rightTarget - rightFront.getCurrentPosition();
 
-                leftBack.setPower(RobotMap.P_CONSTANT_DRIVING*leftError);
-                leftFront.setPower(RobotMap.P_CONSTANT_DRIVING*leftError);
-                rightBack.setPower(-RobotMap.P_CONSTANT_DRIVING*rightError);
-                rightFront.setPower(-RobotMap.P_CONSTANT_DRIVING*rightError);
+        while(mode.opModeIsActive()){
+            logDistance(mode.telemetry, dist);
+            if((Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE)) {
+                break;
             }
+
+            leftError = leftTarget - (leftFront.getCurrentPosition());
+            rightError = rightTarget - (rightFront.getCurrentPosition());
+            powerD_L = RobotMap.P_CONSTANT_DRIVING*leftError;
+            powerD_R = RobotMap.P_CONSTANT_DRIVING*rightError;
+
+            setDrivePower(powerD_L, powerD_R);
         }
+        logDistance(mode.telemetry, dist);
 
         this.stop();
     }
+
+    private void logDistance(Telemetry telemetry, double dist){
+
+        // 0
+        Logging.log("left Position", leftFront.getCurrentPosition(), telemetry);
+        // 0
+        Logging.log("right Position", rightFront.getCurrentPosition(), telemetry);
+        // 0.0,0.0,0.0,0.0
+        Logging.log("Motor Power", Arrays.toString(getPower()), telemetry);
+        // 0.0, 0.0
+        Logging.log("Motor Power", powerD_L +" " + powerD_R, telemetry);
+        // 8256
+        Logging.log("target Position", dist, telemetry);
+        // true
+        Logging.log("Active opmode", activeOpmode, telemetry);
+        // 8256
+        Logging.log("left Error", leftError, telemetry);
+        // 8256
+        Logging.log("right Error", rightError, telemetry);
+        // false
+        Logging.log("Boolean Case", Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE, telemetry);
+        telemetry.update();
+    }
+
 
     private double rangeKeep(double x, double min, double max) {
         if (x < min) return min;
@@ -169,17 +167,6 @@ public class Robot {
         jewelup = !jewelup;
     }
 
-    //Glyph Servo
-    public void toggleGlyph() {
-        if (glyphOpen) {
-            glyphLeft.setPosition(0.5);
-            glyphRight.setPosition(0.5);
-        } else {
-            glyphLeft.setPosition(0);
-            glyphRight.setPosition(1);
-        }
 
-        glyphOpen = !glyphOpen;
-    }
 
 }
