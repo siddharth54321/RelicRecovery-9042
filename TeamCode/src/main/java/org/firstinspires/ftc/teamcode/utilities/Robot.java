@@ -128,29 +128,24 @@ public class Robot {
     private void logDistance(Telemetry telemetry, double dist){
 
         // 0
-        log("left Position", leftFront.getCurrentPosition(), telemetry);
+        Logging.log("left Position", leftFront.getCurrentPosition(), telemetry);
         // 0
-        log("right Position", rightFront.getCurrentPosition(), telemetry);
+        Logging.log("right Position", rightFront.getCurrentPosition(), telemetry);
         // 0.0,0.0,0.0,0.0
-        log("Motor Power", Arrays.toString(getPower()), telemetry);
+        Logging.log("Motor Power", Arrays.toString(getPower()), telemetry);
         // 0.0, 0.0
-        log("Motor Power", powerD_L +" " + powerD_R, telemetry);
+        Logging.log("Motor Power", powerD_L +" " + powerD_R, telemetry);
         // 8256
-        log("target Position", dist, telemetry);
+        Logging.log("target Position", dist, telemetry);
         // true
-        log("Active opmode", activeOpmode, telemetry);
+        Logging.log("Active opmode", activeOpmode, telemetry);
         // 8256
-        log("left Error", leftError, telemetry);
+        Logging.log("left Error", leftError, telemetry);
         // 8256
-        log("right Error", rightError, telemetry);
+        Logging.log("right Error", rightError, telemetry);
         // false
-        log("Boolean Case", Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE, telemetry);
+        Logging.log("Boolean Case", Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE, telemetry);
         telemetry.update();
-    }
-
-    private void log(String caption, Object value, Telemetry telemetry){
-        Log.i(caption, value.toString());
-        telemetry.addData(caption, value);
     }
 
 
