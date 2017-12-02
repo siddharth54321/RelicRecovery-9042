@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import java.util.Arrays;
+import org.firstinspires.ftc.teamcode.utilities.Robot;
+import org.firstinspires.ftc.teamcode.utilities.RobotMap;
 
 @Autonomous(name = "Driving Distance test", group = "Test")
 public class DriveDistanceAuton extends LinearOpMode{

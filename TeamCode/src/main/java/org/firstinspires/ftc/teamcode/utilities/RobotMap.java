@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.utilities;
 
 public class RobotMap {
     public static final float GEAR_RATIO = 50;
