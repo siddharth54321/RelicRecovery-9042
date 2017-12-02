@@ -11,10 +11,9 @@ public class PID {
     public final double D_CONSTANT;
 
     public double target;
-
-    private double err;
-    private double prevError;
-    private double cummErr;
+    public double err;
+    public double prevError;
+    public double cummErr;
 
     /** Full Fledged PID
      *
@@ -32,11 +31,18 @@ public class PID {
         cummErr = 0;
     }
 
+    /** P only control loop
+     * @param P value of constant
+     */
+    public PID(double P){
+        this(P, 0,0);
+    }
+
+
     public void setTarget(double t){
         target = t;
     }
 
-    //TODO change to work
     public double getValue(double curr, double dt){
         err = target - curr;
         cummErr += err;
@@ -46,9 +52,8 @@ public class PID {
         double d = D_CONSTANT * (err - prevError)/dt;
 
         prevError = err;
-        double value =  p + i + d;
 
-        return value;
+        return p + i + d;
     }
 
     public double getValue(double target, double curr, double dt){
@@ -56,12 +61,5 @@ public class PID {
         return getValue(curr, dt);
     }
 
-
-    /** P only control loop
-     * @param P value of constant
-     */
-    public PID(double P){
-        this(P, 0,0);
-    }
 
 }
