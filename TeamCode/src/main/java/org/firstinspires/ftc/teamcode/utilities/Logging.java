@@ -14,4 +14,5 @@ public class Logging {
         Log.i(caption, value.toString());
         telemetry.addData(caption, value);
     }
+
 }
