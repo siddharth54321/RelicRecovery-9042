@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.utilities;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -27,25 +28,13 @@ public class Gyro {
     Acceleration gravity;
     Telemetry telemetry;
 
-    public Gyro(HardwareMap map, final Telemetry telemetry) {
+    public Gyro(HardwareMap map, final Telemetry telemetry, LinearOpMode mode) {
         imu = map.get(BNO055IMU.class, "imu");
         imu.initialize(defaultParam());
 
         this.telemetry = telemetry;
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-        new Runnable() {
-            @Override
-            public void run() {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                Logging.log("heading: ", getHeading(), telemetry);
-                Logging.log("pitch: ", getPitch(), telemetry);
-                Logging.log("yaw: ", getYaw(), telemetry);
-                telemetry.update();
-            }
-        }.run();
     }
 
     public BNO055IMU.Parameters defaultParam() {
@@ -60,15 +49,28 @@ public class Gyro {
     }
 
     public double getHeading() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        logGyro();
         return angles.firstAngle;
     }
 
     public double getPitch() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        logGyro();
         return angles.secondAngle;
     }
 
     public double getYaw() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        logGyro();
         return angles.thirdAngle;
+    }
+
+    public void logGyro(){
+        Logging.log("heading: ", getHeading(), telemetry);
+        Logging.log("pitch: ", getPitch(), telemetry);
+        Logging.log("yaw: ", getYaw(), telemetry);
+//        telemetry.update();
     }
 
 }
