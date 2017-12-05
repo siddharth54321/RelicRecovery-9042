@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.utilities;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp
+@TeleOp(name = "tele")
 public class Teleop extends OpMode {
     //gamepad 1 is driver
     Robot robot;
@@ -11,6 +12,7 @@ public class Teleop extends OpMode {
 
     public void init() {
         robot = new Robot(this.hardwareMap);
+        robot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
@@ -29,9 +31,25 @@ public class Teleop extends OpMode {
             else robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
         }
 
-        if (gamepad2.dpad_right) {
-            smooth = !smooth;
+//        if (gamepad1.dpad_right) {
+//            smooth = !smooth;
+//        }
+
+        if(gamepad1.dpad_right){
+            robot.rightBack.setPower(1);
         }
+        if(gamepad1.dpad_left){
+            robot.leftBack.setPower(1);
+        }if(gamepad1.dpad_up){
+            robot.leftFront.setPower(1);
+        }
+        if(gamepad1.dpad_down){
+            robot.rightFront.setPower(1);
+        }
+
+
+
+
 
         telemetry.addData("Left Stick", gamepad1.left_stick_y);
         telemetry.addData("Right Stick", gamepad1.right_stick_y);
@@ -41,7 +59,7 @@ public class Teleop extends OpMode {
         telemetry.addData("Right Power Front", robot.rightFront.getPower());
         telemetry.addData("Right Power Back", robot.rightBack.getPower());
 
-        telemetry.addData("Jewel Position", robot.jewel.getPosition());
+//        telemetry.addData("Jewel Position", robot.jewel.getPosition());
         telemetry.addData("Smooth: ", smooth);
         telemetry.update();
     }

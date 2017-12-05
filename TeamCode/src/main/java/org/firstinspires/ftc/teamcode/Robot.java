@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.utilities;
-
-import android.util.Log;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -58,7 +56,7 @@ public class Robot {
         rightBack.setZeroPowerBehavior(behav);
     }
 
-    public void setDrivePower(float val) {
+    public void setDrivePower(double val) {
         setDrivePower(-val, -val);
     }
 
@@ -66,16 +64,20 @@ public class Robot {
         left = rangeKeep(left, -1, 1);
         right = rangeKeep(right, -1, 1);
 
-        leftBack.setPower(left);
+        leftBack.setPower(-left);
         leftFront.setPower(left);
-        rightBack.setPower(-right);
-        rightFront.setPower(-right);
+        rightBack.setPower(right);
+        rightFront.setPower(right);
 
 
     }
 
     public double[] getPower() {
         return new double[]{leftBack.getPower(), leftFront.getPower(), rightBack.getPower(), rightFront.getPower()};
+    }
+
+    public double[] getPosition() {
+        return new double[]{leftBack.getCurrentPosition(), leftFront.getCurrentPosition(), rightBack.getCurrentPosition(), rightFront.getCurrentPosition()};
     }
 
     public void smoothDrive(double left, double right) {
@@ -128,9 +130,9 @@ public class Robot {
     private void logDistance(Telemetry telemetry, double dist){
 
         // 0
-        Logging.log("left Position", leftFront.getCurrentPosition(), telemetry);
+        Logging.log("left Position Front", leftFront.getCurrentPosition(), telemetry);
         // 0
-        Logging.log("right Position", rightFront.getCurrentPosition(), telemetry);
+        Logging.log("right Position Front", rightFront.getCurrentPosition(), telemetry);
         // 0.0,0.0,0.0,0.0
         Logging.log("Motor Power", Arrays.toString(getPower()), telemetry);
         // 0.0, 0.0
@@ -145,6 +147,13 @@ public class Robot {
         Logging.log("right Error", rightError, telemetry);
         // false
         Logging.log("Boolean Case", Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE, telemetry);
+
+        double[] positionCurr = this.getPosition();
+        double avgLeft = (positionCurr[0]+ positionCurr[1])/2.0;
+        double avgRight = (positionCurr[2]+ positionCurr[3])/2.0;
+
+        Logging.log("Left position Average", avgLeft, telemetry);
+        Logging.log("Right position Average", avgRight, telemetry);
         telemetry.update();
     }
 
