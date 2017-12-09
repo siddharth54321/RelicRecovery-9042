@@ -5,7 +5,7 @@ public class RobotMap {
     public static final float TICKS_PER_ROTATION = 415;
     public static final float WHEEL_DIAMETER = 4; //inch
 
-    public static final float TURN_TOLERANCE = 2;
+    public static final float TURN_TOLERANCE = 13;
     public static final float P_TURN = 0.01f;
 
     public static final float DRIVE_TOLERANCE = 1;

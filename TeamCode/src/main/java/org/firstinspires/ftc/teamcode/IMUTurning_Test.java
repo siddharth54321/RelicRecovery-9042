@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -60,112 +61,37 @@ public class IMUTurning_Test extends LinearOpMode
 
 
     @Override public void runOpMode() {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        robot = new Robot(this.hardwareMap);
-
-        //composeTelemetry();
-
+        Gyro gyro = new Gyro(hardwareMap);
+        imu = gyro.imu;
+        robot = new Robot(hardwareMap);
         waitForStart();
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         //TODO figure out why there is a 13 degree error
-        double target = imu.getAngularOrientation().firstAngle + 90-13;//heading
+        double target = imu.getAngularOrientation().firstAngle + 90 - 13;//heading
 
-        double error = target- imu.getAngularOrientation().firstAngle;
+        double error = target- gyro.getYaw();
 
         // Loop and update the dashboard
         while (opModeIsActive() && error >= RobotMap.TURN_TOLERANCE) {
-            error = target- imu.getAngularOrientation().firstAngle;
-            telemetry.addData("Heading",  imu.getAngularOrientation().firstAngle);
-            telemetry.addData("Error",  error);
-            telemetry.addData("Left speed", Arrays.toString(robot.getPower()));
+            error = target - gyro.getYaw();
+            Logging.log("roll: ", gyro.getRoll(), telemetry);
+            Logging.log("pitch: ", gyro.getPitch(), telemetry);
+            Logging.log("yaw: ", gyro.getYaw(), telemetry);
             telemetry.update();
 
             robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
-
         }
+
+        //TODO figure out which orientation
         while(opModeIsActive()){
-            robot.stop();
-            error = target- imu.getAngularOrientation().firstAngle;
-            telemetry.addData("Heading",  imu.getAngularOrientation().firstAngle);
-            telemetry.addData("Error",  error);
-            telemetry.addData("Left speed", Arrays.toString(robot.getPower()));
+            Logging.log("roll: ", gyro.getRoll(), telemetry);
+            Logging.log("pitch: ", gyro.getPitch(), telemetry);
+            Logging.log("yaw: ", gyro.getYaw(), telemetry);
             telemetry.update();
         }
     }
-
-
-    void composeTelemetry() {
-
-        telemetry.addAction(new Runnable() { @Override public void run()
-        {
-            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            gravity  = imu.getGravity();
-        }
-        });
-
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getSystemStatus().toShortString();
-                    }
-                })
-                .addData("calib", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getCalibrationStatus().toString();
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("heading", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-                .addData("roll", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-                .addData("pitch", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("grvty", new Func<String>() {
-                    @Override public String value() {
-                        return gravity.toString();
-                    }
-                })
-                .addData("mag", new Func<String>() {
-                    @Override public String value() {
-                        return String.format(Locale.getDefault(), "%.3f",
-                                Math.sqrt(gravity.xAccel*gravity.xAccel
-                                        + gravity.yAccel*gravity.yAccel
-                                        + gravity.zAccel*gravity.zAccel));
-                    }
-                });
-    }
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-
 
 }

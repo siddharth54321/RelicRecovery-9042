@@ -56,6 +56,10 @@ public class PID {
         return p + i + d;
     }
 
+    public double getValueP(double curr){
+        return getValue(curr, 1);
+    }
+
     public double getValue(double target, double curr, double dt){
         setTarget(target);
         return getValue(curr, dt);

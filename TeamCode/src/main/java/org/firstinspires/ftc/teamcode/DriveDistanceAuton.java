@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Disabled
 @Autonomous(name = "Driving Distance test", group = "Test")
 public class DriveDistanceAuton extends LinearOpMode{
 
@@ -15,7 +14,7 @@ public class DriveDistanceAuton extends LinearOpMode{
         robot.stop();
 
         waitForStart();
-        robot.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         float dist = RobotMap.distanceToTicks(5);
 
         float power = 1;
@@ -26,14 +25,19 @@ public class DriveDistanceAuton extends LinearOpMode{
         pidRight.setTarget(dist);
 
 
-        while(opModeIsActive() || pidLeft.err < RobotMap.DRIVE_TOLERANCE){
+        while(opModeIsActive() || (pidLeft.err < RobotMap.DRIVE_TOLERANCE && pidRight.err < RobotMap.DRIVE_TOLERANCE )){
             double[] positionCurr = robot.getPosition();
             double avgLeft = (positionCurr[0]+ positionCurr[1])/2.0;
             double avgRight = (positionCurr[2]+ positionCurr[3])/2.0;
-            robot.setDrivePower(pidLeft.getValue(avgLeft, 1), pidRight.getValue(avgRight, 1));
+            robot.setDrivePower(pidLeft.getValueP(avgLeft), pidRight.getValueP(avgRight));
+
+            Logging.log("Left Back Motor Position", positionCurr[0], telemetry);
+            Logging.log("Left Front Motor Position", positionCurr[1], telemetry);
+            Logging.log("Right Back Motor Position", positionCurr[2], telemetry);
+            Logging.log("Right Front Motor Position", positionCurr[3], telemetry);
+            telemetry.update();
         }
 
-            robot.stop();
         robot.stop();
     }
 }

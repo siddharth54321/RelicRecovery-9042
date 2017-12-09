@@ -14,6 +14,7 @@ import java.util.Arrays;
 public class Robot {
     //drive motors
     public DcMotor leftFront, leftBack, rightFront, rightBack;
+    public DcMotor intake;
     public boolean activeOpmode;
 
     //jewel mechanism
@@ -21,7 +22,7 @@ public class Robot {
     public ColorSensor color;
     public boolean jewelup = true;
 
-    public double oldLeftSpeed = 0, oldRightSpeed = 0;
+    public double oldLeftSpeed = 0, oldRightSpeed = 0, oldIntakeSpeed = 0;
 
     public Robot(HardwareMap map) {
         init(map);
@@ -34,6 +35,10 @@ public class Robot {
         rightFront = map.dcMotor.get("1");
         leftBack = map.dcMotor.get("4"); // changed originally rightFront
         rightBack = map.dcMotor.get("3");
+
+        jewel = map.servo.get("jewelS");
+        color = map.colorSensor.get("color");
+        intake = map.dcMotor.get("intake");
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -68,8 +73,6 @@ public class Robot {
         leftFront.setPower(left);
         rightBack.setPower(right);
         rightFront.setPower(right);
-
-
     }
 
     public double[] getPower() {
@@ -90,80 +93,23 @@ public class Robot {
         setDrivePower(left, right);
     }
 
+    public void smoothIntake(double speed) {
+        oldIntakeSpeed = RobotMap.smoothSpeed(speed, oldIntakeSpeed, RobotMap.INCREMENT);
+
+        speed = oldIntakeSpeed;
+
+        this.intake.setPower(speed);
+    }
+
     public void stop() {
         setDrivePower(0);
     }
-
-
-    double leftError;
-    double rightError;
-    double leftTarget;
-    double rightTarget;
-    double powerD_L, powerD_R;
-
-    public void driveDistance(float dist, LinearOpMode mode){
-
-        leftTarget = leftFront.getCurrentPosition()+ dist;
-        rightTarget = rightFront.getCurrentPosition()+ dist;
-
-        leftError = leftTarget - leftFront.getCurrentPosition();
-        rightError = rightTarget - rightFront.getCurrentPosition();
-
-        while(mode.opModeIsActive()){
-            logDistance(mode.telemetry, dist);
-            if((Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE)) {
-                break;
-            }
-
-            leftError = leftTarget - (leftFront.getCurrentPosition());
-            rightError = rightTarget - (rightFront.getCurrentPosition());
-            powerD_L = RobotMap.P_CONSTANT_DRIVING*leftError;
-            powerD_R = RobotMap.P_CONSTANT_DRIVING*rightError;
-
-            setDrivePower(powerD_L, powerD_R);
-        }
-        logDistance(mode.telemetry, dist);
-
-        this.stop();
-    }
-
-    private void logDistance(Telemetry telemetry, double dist){
-
-        // 0
-        Logging.log("left Position Front", leftFront.getCurrentPosition(), telemetry);
-        // 0
-        Logging.log("right Position Front", rightFront.getCurrentPosition(), telemetry);
-        // 0.0,0.0,0.0,0.0
-        Logging.log("Motor Power", Arrays.toString(getPower()), telemetry);
-        // 0.0, 0.0
-        Logging.log("Motor Power", powerD_L +" " + powerD_R, telemetry);
-        // 8256
-        Logging.log("target Position", dist, telemetry);
-        // true
-        Logging.log("Active opmode", activeOpmode, telemetry);
-        // 8256
-        Logging.log("left Error", leftError, telemetry);
-        // 8256
-        Logging.log("right Error", rightError, telemetry);
-        // false
-        Logging.log("Boolean Case", Math.abs(leftError) < RobotMap.DRIVE_TOLERANCE && Math.abs(rightError) < RobotMap.DRIVE_TOLERANCE, telemetry);
-
-        double[] positionCurr = this.getPosition();
-        double avgLeft = (positionCurr[0]+ positionCurr[1])/2.0;
-        double avgRight = (positionCurr[2]+ positionCurr[3])/2.0;
-
-        Logging.log("Left position Average", avgLeft, telemetry);
-        Logging.log("Right position Average", avgRight, telemetry);
-        telemetry.update();
-    }
-
 
     private double rangeKeep(double x, double min, double max) {
         if (x < min) return min;
         else if (x > max) return max;
         return x;
     }
-
 
     //Jewel Mech
     public void toggleJewel() {

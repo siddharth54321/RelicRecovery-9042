@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,7 +11,9 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Disabled
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
 @Autonomous(name = "Red: Jewel Auton", group = "Sensor")
 public class JewelAutonRed extends LinearOpMode {
 
@@ -38,7 +41,7 @@ public class JewelAutonRed extends LinearOpMode {
         String str = "init";
 
         while (opModeIsActive()) {
-            robot.jewel.setPosition(1);
+            robot.jewel.setPosition(0.3);
 
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR), (int) (sensorColor.green() * SCALE_FACTOR), (int) (sensorColor.blue() * SCALE_FACTOR), hsvValues);
 
@@ -56,35 +59,87 @@ public class JewelAutonRed extends LinearOpMode {
             telemetry.addData("Servo Position", robot.jewel.getPosition());
             telemetry.update();
 
-            if (time.time() > 5) break;
+            if (time.time() > 1) break;
         }
 
 
         telemetry.addData("Detected", str);
         telemetry.update();
 
+        double power;
+        if(red){
+            power = .2;
+        }else{
+            power = -.2;
+        }
+
         //for testing purposes
         time.reset();
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (opModeIsActive()) {
-            robot.setDrivePower(red? -.20f: .20f);
-            if(time.time()>5) break;
+        while (opModeIsActive() && opModeIsActive()) {
+            robot.setDrivePower(power);
+            if(time.time()>0.5){
+                break;
+            }
+            telemetry.addData("Detected", str);
+            telemetry.update();
+        }
+        robot.jewel.setPosition(1);
 
+        while (opModeIsActive()) {
+            if(time.time()>5 && opModeIsActive()) break;
             telemetry.addData("Detected", str);
             telemetry.update();
         }
         robot.setDrivePower(0);
 
-        time.reset();
-        robot.setDrivePower(red? .5f:-.5f);
-        while(time.seconds() < 0.3) {
-            telemetry.addData("Time", time.seconds());
+        if(red) {
+            time.reset();
+            Gyro gyro = new Gyro(hardwareMap);
+            BNO055IMU imu = gyro.imu;
+            robot = new Robot(hardwareMap);
+            waitForStart();
+
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
+            //TODO figure out why there is a 13 degree error
+            double target = imu.getAngularOrientation().firstAngle - 90 + 13;//heading
+
+            double error = target- gyro.getYaw();
+
+            // Loop and update the dashboard
+            while (opModeIsActive() && Math.abs(error) >= RobotMap.TURN_TOLERANCE) {
+                error = target - gyro.getYaw();
+                Logging.log("roll: ", gyro.getRoll(), telemetry);
+                Logging.log("pitch: ", gyro.getPitch(), telemetry);
+                Logging.log("yaw: ", gyro.getYaw(), telemetry);
+                Logging.log("error: ", error, telemetry);
+                telemetry.update();
+                robot.intake.setPower(-1);
+                robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
+            }
+
+            robot.setDrivePower(power);
+            while (time.seconds() < 0.3 && opModeIsActive()) {
+                telemetry.addData("Time", time.seconds());
+            }
+
+            robot.setDrivePower(-power);
+            while (time.seconds() < 0.3 && opModeIsActive()) {
+                telemetry.addData("Time", time.seconds());
+            }
+        }else{
+            time.reset();
+            robot.setDrivePower(-power);
+            while (time.seconds() < 0.3 && opModeIsActive()) {
+                telemetry.addData("Time", time.seconds());
+            }
         }
 
         robot.setDrivePower(0);
 
         while(opModeIsActive()){
-            robot.jewel.setPosition(0);
+            robot.jewel.setPosition(1);
         }
     }
 }
