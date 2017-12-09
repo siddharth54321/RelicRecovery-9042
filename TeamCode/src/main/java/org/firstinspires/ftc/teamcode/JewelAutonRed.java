@@ -76,7 +76,7 @@ public class JewelAutonRed extends LinearOpMode {
         //for testing purposes
         time.reset();
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (opModeIsActive() && opModeIsActive()) {
+        while (opModeIsActive()) {
             robot.setDrivePower(power);
             if(time.time()>0.5){
                 break;
@@ -87,7 +87,10 @@ public class JewelAutonRed extends LinearOpMode {
         robot.jewel.setPosition(1);
 
         while (opModeIsActive()) {
-            if(time.time()>5 && opModeIsActive()) break;
+            robot.setDrivePower(power);
+            if(time.time()>5) {
+                break;
+            }
             telemetry.addData("Detected", str);
             telemetry.update();
         }
@@ -103,7 +106,7 @@ public class JewelAutonRed extends LinearOpMode {
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
             //TODO figure out why there is a 13 degree error
-            double target = imu.getAngularOrientation().firstAngle - 90 + 13;//heading
+            double target = imu.getAngularOrientation().firstAngle + 90 - 13;//heading
 
             double error = target- gyro.getYaw();
 

@@ -78,7 +78,7 @@ public class JewelAutonBlue extends LinearOpMode {
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()) {
             robot.setDrivePower(power);
-            if(time.time()>2) break;
+            if(time.time()>0.5) break;
 
             telemetry.addData("Detected", str);
             telemetry.update();
