@@ -70,7 +70,7 @@ public class IMUTurning_Test extends LinearOpMode
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         //TODO figure out why there is a 13 degree error
-        double target = imu.getAngularOrientation().firstAngle + 90 - 13;//heading
+        double target = imu.getAngularOrientation().firstAngle - 90;//heading
 
         double error = target- gyro.getYaw();
 

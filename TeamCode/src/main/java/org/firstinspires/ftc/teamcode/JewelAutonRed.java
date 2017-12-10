@@ -59,7 +59,7 @@ public class JewelAutonRed extends LinearOpMode {
             telemetry.addData("Servo Position", robot.jewel.getPosition());
             telemetry.update();
 
-            if (time.time() > 1) break;
+            if (time.seconds() > 3) break;
         }
 
 
@@ -96,7 +96,7 @@ public class JewelAutonRed extends LinearOpMode {
         }
         robot.setDrivePower(0);
 
-        if(red) {
+        if(!red) {
             time.reset();
             Gyro gyro = new Gyro(hardwareMap);
             BNO055IMU imu = gyro.imu;
