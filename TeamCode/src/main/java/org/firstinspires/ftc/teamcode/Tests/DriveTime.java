@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.Testing;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Utilities.Robot;
 
-@Autonomous(name = "Tick Counter test", group = "Test")
-
-public class TickCounter extends LinearOpMode {
+@Autonomous(name = "Driving Time", group = "Test")
+public class DriveTime extends LinearOpMode{
 
     public void runOpMode(){
         Robot robot = new Robot(this.hardwareMap);
@@ -18,14 +18,20 @@ public class TickCounter extends LinearOpMode {
         waitForStart();
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        while(opModeIsActive()){
-            robot.activeOpmode = true;
-            telemetry.addData("left Position", robot.leftBack.getCurrentPosition());
-            telemetry.addData("right Position", (robot.rightFront.getCurrentPosition()+robot.rightBack.getCurrentPosition())/2.0);
-            telemetry.update();
+        ElapsedTime time = new ElapsedTime();
+        time.startTime();
+        time.reset();
+        while(time.milliseconds() < 4000){
+            robot.setDrivePower(0.6f);
         }
+
+        while(time.milliseconds() < 10){
+            robot.setDrivePower(-0.6f);
+        }
+
+        robot.stop();
+
         robot.activeOpmode = false;
         robot.stop();
     }
 }
-
