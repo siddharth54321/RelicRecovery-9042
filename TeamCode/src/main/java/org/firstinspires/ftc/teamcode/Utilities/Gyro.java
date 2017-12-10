@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Utilities;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -49,7 +49,7 @@ import java.util.Locale;
 
 public class Gyro {
     // The IMU sensor object
-    BNO055IMU imu;
+    public BNO055IMU imu;
 
     // State used for updating telemetry
     Orientation angles;

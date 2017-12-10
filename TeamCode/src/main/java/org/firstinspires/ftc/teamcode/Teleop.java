@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Utilities.Robot;
+
 @TeleOp(name = "tele")
 public class Teleop extends OpMode {
     //gamepad 1 is driver
