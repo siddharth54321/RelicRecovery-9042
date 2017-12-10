@@ -33,7 +33,6 @@ public class JewelAutonBlue extends LinearOpMode {
 
 
 
-
         boolean red = false;
 
         ElapsedTime time = new ElapsedTime();
