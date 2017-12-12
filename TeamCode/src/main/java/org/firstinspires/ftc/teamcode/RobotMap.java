@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.Utilities;
+package org.firstinspires.ftc.teamcode;
 
 public class RobotMap {
     public static final float GEAR_RATIO = 50;
     public static final float TICKS_PER_ROTATION = 415;
     public static final float WHEEL_DIAMETER = 4; //inch
 
-    public static final float TURN_TOLERANCE = 13;
+    public static final float TURN_TOLERANCE = 13; //offset due to P only control
     public static final float P_TURN = 0.01f;
 
     public static final float DRIVE_TOLERANCE = 1;

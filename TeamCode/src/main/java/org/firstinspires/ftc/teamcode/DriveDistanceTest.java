@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.Tests;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Utilities.Logging;
-import org.firstinspires.ftc.teamcode.Utilities.PID;
-import org.firstinspires.ftc.teamcode.Utilities.Robot;
-import org.firstinspires.ftc.teamcode.Utilities.RobotMap;
+import org.firstinspires.ftc.teamcode.Logging;
+import org.firstinspires.ftc.teamcode.PID;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.RobotMap;
 
 @Autonomous(name = "Driving Distance test", group = "Test")
 public class DriveDistanceTest extends LinearOpMode{

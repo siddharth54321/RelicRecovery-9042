@@ -27,66 +27,69 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.Tests;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Hardware;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.Utilities.Gyro;
-import org.firstinspires.ftc.teamcode.Utilities.Logging;
-import org.firstinspires.ftc.teamcode.Utilities.Robot;
-import org.firstinspires.ftc.teamcode.Utilities.RobotMap;
 
-@Autonomous(name = "Turn 90 test", group = "Sensor")
-public class IMUTurning_Test extends LinearOpMode
-{
+import java.util.Locale;
 
+public class Gyro {
     // The IMU sensor object
-    BNO055IMU imu;
+    public BNO055IMU imu;
 
-    Robot robot;
-
+    // State used for updating telemetry
     Orientation angles;
-    Acceleration gravity;
+
+    public Gyro(HardwareMap map){
+        initGyro(map);
+    }
+
+    public void initGyro(HardwareMap hardwareMap)
+    {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+    }
+
+    //TODO: CHANGE THE AXES
+    private void updateAngles() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
+    }
 
 
-    @Override public void runOpMode() {
 
-        Gyro gyro = new Gyro(hardwareMap);
-        imu = gyro.imu;
-        robot = new Robot(hardwareMap);
-        waitForStart();
-
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-        //TODO figure out why there is a 13 degree error
-        double target = imu.getAngularOrientation().firstAngle - 90;//heading
-
-        double error = target- gyro.getYaw();
-
-        // Loop and update the dashboard
-        while (opModeIsActive() && error >= RobotMap.TURN_TOLERANCE) {
-            error = target - gyro.getYaw();
-            Logging.log("roll: ", gyro.getRoll(), telemetry);
-            Logging.log("pitch: ", gyro.getPitch(), telemetry);
-            Logging.log("yaw: ", gyro.getYaw(), telemetry);
-            telemetry.update();
-
-            robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
-        }
-
-        //TODO figure out which orientation
-        while(opModeIsActive()){
-            Logging.log("roll: ", gyro.getRoll(), telemetry);
-            Logging.log("pitch: ", gyro.getPitch(), telemetry);
-            Logging.log("yaw: ", gyro.getYaw(), telemetry);
-            telemetry.update();
-        }
+    public double getRoll(){
+        updateAngles();
+        return angles.secondAngle;
+    }
+    public double getPitch(){
+        updateAngles();
+        return angles.thirdAngle;
+    }
+    public double getYaw() {
+        updateAngles();
+        return angles.firstAngle;
     }
 
 }

@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode;
 
 
 import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,13 +13,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.Utilities.Gyro;
-import org.firstinspires.ftc.teamcode.Utilities.Logging;
-import org.firstinspires.ftc.teamcode.Utilities.Robot;
-import org.firstinspires.ftc.teamcode.Utilities.RobotMap;
-
-@Autonomous(name = "Red: Jewel Auton", group = "Sensor")
-public class JewelAutonRed extends LinearOpMode {
+@Disabled
+@Autonomous(name = "Blue: Jewel Auton", group = "Sensor")
+public class JewelAutonBlueUnsure extends LinearOpMode {
 
     ColorSensor sensorColor;
     Robot robot;
@@ -33,7 +30,6 @@ public class JewelAutonRed extends LinearOpMode {
         final float values[] = hsvValues;
         final double SCALE_FACTOR = 255;
         waitForStart();
-
 
 
 
@@ -65,15 +61,14 @@ public class JewelAutonRed extends LinearOpMode {
             if (time.seconds() > 3) break;
         }
 
-
         telemetry.addData("Detected", str);
         telemetry.update();
 
         double power;
         if(red){
-            power = .2;
-        }else{
             power = -.2;
+        }else{
+            power = .2;
         }
 
         //for testing purposes
@@ -81,9 +76,8 @@ public class JewelAutonRed extends LinearOpMode {
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()) {
             robot.setDrivePower(power);
-            if(time.time()>0.5){
-                break;
-            }
+            if(time.time()>0.5) break;
+
             telemetry.addData("Detected", str);
             telemetry.update();
         }
@@ -91,15 +85,22 @@ public class JewelAutonRed extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.setDrivePower(power);
-            if(time.time()>5) {
+            if(time.time()> 5){
                 break;
             }
             telemetry.addData("Detected", str);
             telemetry.update();
         }
+
         robot.setDrivePower(0);
 
-        if(!red) {
+        time.reset();
+        robot.setDrivePower(-power);
+        if(red){
+            while(time.seconds() < 0.3) {
+                telemetry.addData("Time", time.seconds());
+            }
+        }else{
             time.reset();
             Gyro gyro = new Gyro(hardwareMap);
             BNO055IMU imu = gyro.imu;
@@ -109,7 +110,8 @@ public class JewelAutonRed extends LinearOpMode {
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
             //TODO figure out why there is a 13 degree error
-            double target = imu.getAngularOrientation().firstAngle + 90 - 13;//heading
+
+            double target = imu.getAngularOrientation().firstAngle - 270;//heading
 
             double error = target- gyro.getYaw();
 
@@ -134,12 +136,6 @@ public class JewelAutonRed extends LinearOpMode {
             while (time.seconds() < 0.3 && opModeIsActive()) {
                 telemetry.addData("Time", time.seconds());
             }
-        }else{
-            time.reset();
-            robot.setDrivePower(-power);
-            while (time.seconds() < 0.3 && opModeIsActive()) {
-                telemetry.addData("Time", time.seconds());
-            }
         }
 
         robot.setDrivePower(0);
@@ -147,6 +143,7 @@ public class JewelAutonRed extends LinearOpMode {
         while(opModeIsActive()){
             robot.jewel.setPosition(1);
         }
+
     }
 }
 

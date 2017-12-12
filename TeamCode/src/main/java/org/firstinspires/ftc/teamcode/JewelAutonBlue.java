@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode;
 
 
 import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,10 +13,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.Utilities.Gyro;
-import org.firstinspires.ftc.teamcode.Utilities.Logging;
-import org.firstinspires.ftc.teamcode.Utilities.Robot;
-import org.firstinspires.ftc.teamcode.Utilities.RobotMap;
 
 @Autonomous(name = "Blue: Jewel Auton", group = "Sensor")
 public class JewelAutonBlue extends LinearOpMode {
@@ -33,6 +30,7 @@ public class JewelAutonBlue extends LinearOpMode {
         final float values[] = hsvValues;
         final double SCALE_FACTOR = 255;
         waitForStart();
+
 
 
 
@@ -61,8 +59,9 @@ public class JewelAutonBlue extends LinearOpMode {
             telemetry.addData("Servo Position", robot.jewel.getPosition());
             telemetry.update();
 
-            if (time.seconds() > 3) break;
+            if (time.time() > 1) break;
         }
+
 
         telemetry.addData("Detected", str);
         telemetry.update();
@@ -113,8 +112,7 @@ public class JewelAutonBlue extends LinearOpMode {
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
             //TODO figure out why there is a 13 degree error
-
-            double target = imu.getAngularOrientation().firstAngle - 270 + 13;//heading
+            double target = imu.getAngularOrientation().firstAngle - 90;//heading
 
             double error = target- gyro.getYaw();
 
@@ -149,4 +147,3 @@ public class JewelAutonBlue extends LinearOpMode {
 
     }
 }
-

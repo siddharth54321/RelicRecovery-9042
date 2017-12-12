@@ -1,8 +1,5 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode;
 
-/**
- * Created by anikaitsingh on 12/9/17.
- */
 
 import android.graphics.Color;
 
@@ -12,11 +9,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-import org.firstinspires.ftc.teamcode.Utilities.Robot;
-
-@Autonomous(name = "Blue: Jewel Only", group = "Sensor")
-public class BlueJewelOnly extends LinearOpMode {
+@Autonomous(name = "Red: Jewel Only", group = "Sensor")
+public class RedJewelOnly extends LinearOpMode {
 
     ColorSensor sensorColor;
     Robot robot;
@@ -67,9 +61,9 @@ public class BlueJewelOnly extends LinearOpMode {
 
         double power;
         if (red) {
-            power = -.2;
-        } else {
             power = .2;
+        } else {
+            power = -.2;
         }
 
         //for testing purposes
