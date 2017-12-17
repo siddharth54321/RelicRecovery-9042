@@ -9,11 +9,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Robot {
     //drive motors
     public DcMotor leftFront, leftBack, rightFront, rightBack;
-    public DcMotor intake;
+    public DcMotor intakeLeft, intakeRight;
+    public DcMotor elevatorLeft, elevatorRight;
     public boolean activeOpmode;
 
     //jewel mechanism
-    public Servo jewel;
+    public Servo jewel, flipper;
     public ColorSensor color;
     public boolean jewelup = true;
 
@@ -32,10 +33,17 @@ public class Robot {
         rightBack = map.dcMotor.get("3");
 
         jewel = map.servo.get("jewelS");
+        flipper = map.servo.get("Flipper");
         color = map.colorSensor.get("color");
-        intake = map.dcMotor.get("intake");
+        intakeLeft = map.dcMotor.get("intakeLeft");
+        intakeRight = map.dcMotor.get("intakeRight");
+        elevatorLeft = map.dcMotor.get("elevatorLeft");
+        elevatorRight = map.dcMotor.get("elevatorRight");
+
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -64,7 +72,7 @@ public class Robot {
         left = rangeKeep(left, -1, 1);
         right = rangeKeep(right, -1, 1);
 
-        leftBack.setPower(-left);
+        leftBack.setPower(left);
         leftFront.setPower(left);
         rightBack.setPower(right);
         rightFront.setPower(right);
@@ -93,7 +101,10 @@ public class Robot {
 
         speed = oldIntakeSpeed;
 
-        this.intake.setPower(speed);
+        this.intakeLeft.setPower(speed);
+        this.intakeRight.setPower(-speed);
+        this.elevatorLeft.setPower(speed);
+        this.elevatorRight.setPower(-speed);
     }
 
     public void stop() {
@@ -117,6 +128,14 @@ public class Robot {
         jewelup = !jewelup;
     }
 
+    public void toggleFlipper() {
+        if (jewel.getPosition() == 1) {
+            jewel.setPosition(0);
+        } else {
+            jewel.setPosition(1);
+        }
 
+        jewelup = !jewelup;
+    }
 
 }

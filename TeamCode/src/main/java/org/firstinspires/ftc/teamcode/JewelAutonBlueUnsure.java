@@ -123,7 +123,7 @@ public class JewelAutonBlueUnsure extends LinearOpMode {
                 Logging.log("yaw: ", gyro.getYaw(), telemetry);
                 Logging.log("error: ", error, telemetry);
                 telemetry.update();
-                robot.intake.setPower(-1);
+                robot.smoothIntake(-1);
                 robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
             }
 

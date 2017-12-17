@@ -40,6 +40,10 @@ public class PID {
         target = t;
     }
 
+    public double getValue(double curr){
+        return getValue(curr, 1);
+    }
+
     public double getValue(double curr, double dt){
         err = target - curr;
         cummErr += err;

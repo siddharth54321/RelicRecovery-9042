@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+@Disabled
 @Autonomous(name = "Blue: Jewel Auton", group = "Sensor")
 public class JewelAutonBlue extends LinearOpMode {
 
@@ -124,7 +125,7 @@ public class JewelAutonBlue extends LinearOpMode {
                 Logging.log("yaw: ", gyro.getYaw(), telemetry);
                 Logging.log("error: ", error, telemetry);
                 telemetry.update();
-                robot.intake.setPower(-1);
+                robot.smoothIntake(-1);
                 robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
             }
 

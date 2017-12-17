@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -42,6 +43,7 @@ import org.firstinspires.ftc.teamcode.Logging;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.RobotMap;
 
+@Disabled
 @Autonomous(name = "Turn 90 test", group = "Sensor")
 public class IMUTurning_Test extends LinearOpMode
 {
@@ -64,20 +66,24 @@ public class IMUTurning_Test extends LinearOpMode
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        //TODO figure out why there is a 13 degree error
-        double target = imu.getAngularOrientation().firstAngle - 90;//heading
+        PID pid = new PID(RobotMap.P_TURN);
+        double target = gyro.getYaw() - 90;//heading
 
-        double error = target- gyro.getYaw();
+        pid.setTarget(target);
+
+        pid.getValue(gyro.getYaw());
 
         // Loop and update the dashboard
-        while (opModeIsActive() && error >= RobotMap.TURN_TOLERANCE) {
-            error = target - gyro.getYaw();
+        while (opModeIsActive() && Math.abs(pid.err) >= RobotMap.TURN_TOLERANCE) {
             Logging.log("roll: ", gyro.getRoll(), telemetry);
             Logging.log("pitch: ", gyro.getPitch(), telemetry);
             Logging.log("yaw: ", gyro.getYaw(), telemetry);
+            Logging.log("error", pid.err,telemetry);
+            Logging.log("target", target,telemetry);
+            Logging.log("Turn Condition", Math.abs(pid.err) >= RobotMap.TURN_TOLERANCE, telemetry);
             telemetry.update();
 
-            robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
+            robot.setDrivePower(pid.getValue(gyro.getYaw()), -pid.getValue(gyro.getYaw()));
         }
 
         //TODO figure out which orientation
@@ -85,6 +91,9 @@ public class IMUTurning_Test extends LinearOpMode
             Logging.log("roll: ", gyro.getRoll(), telemetry);
             Logging.log("pitch: ", gyro.getPitch(), telemetry);
             Logging.log("yaw: ", gyro.getYaw(), telemetry);
+            Logging.log("error", pid.err,telemetry);
+            Logging.log("target", target,telemetry);
+            Logging.log("Turn Condition", Math.abs(pid.err) >= RobotMap.TURN_TOLERANCE, telemetry);
             telemetry.update();
         }
     }

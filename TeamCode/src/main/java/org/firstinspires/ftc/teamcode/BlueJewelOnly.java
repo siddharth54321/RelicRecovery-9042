@@ -80,6 +80,20 @@ public class BlueJewelOnly extends LinearOpMode {
             telemetry.addData("Detected", str);
             telemetry.update();
         }
-        robot.jewel.setPosition(1);
+        robot.jewel.setPosition(0);
+
+        while (opModeIsActive()) {
+            robot.setDrivePower(.2);
+            if(time.time()>5) {
+                break;
+            }
+            telemetry.update();
+        }
+        robot.setDrivePower(0);
+        robot.smoothIntake(-1);
+        while(opModeIsActive()) {
+            robot.smoothIntake(-1);
+        }
+        robot.smoothIntake(0);
     }
 }

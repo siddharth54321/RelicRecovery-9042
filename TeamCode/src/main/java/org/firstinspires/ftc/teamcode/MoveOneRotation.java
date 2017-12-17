@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Robot;
  * Created by anikaitsingh on 11/26/17.
  */
 
+@Disabled
 @Autonomous(name = "MoveOneRotation")
 public class MoveOneRotation extends LinearOpMode {
     @Override

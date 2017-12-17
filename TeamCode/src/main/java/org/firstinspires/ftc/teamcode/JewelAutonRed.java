@@ -5,6 +5,7 @@ import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+@Disabled
 @Autonomous(name = "Red: Jewel Auton", group = "Sensor")
 public class JewelAutonRed extends LinearOpMode {
 
@@ -117,7 +119,7 @@ public class JewelAutonRed extends LinearOpMode {
                 Logging.log("yaw: ", gyro.getYaw(), telemetry);
                 Logging.log("error: ", error, telemetry);
                 telemetry.update();
-                robot.intake.setPower(-1);
+                robot.smoothIntake(-1);
                 robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
             }
 

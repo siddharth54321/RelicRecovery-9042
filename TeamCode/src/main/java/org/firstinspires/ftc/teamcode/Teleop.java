@@ -27,22 +27,22 @@ public class Teleop extends OpMode {
         } else if (gamepad1.x) {
             robot.setDrivePower(.3f, -.3f);
         } else {
-            if (smooth){
+            if (gamepad1.right_trigger > 0.5) {
+                robot.setDrivePower(0.3 * gamepad1.left_stick_y, 0.3 * gamepad1.right_stick_y);
+            } else if (gamepad1.right_trigger < 0.5) {
                 robot.smoothDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
-            }
-            else {
-                if(gamepad1.right_trigger <0.5) robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
-                else robot.setDrivePower(0.3*gamepad1.left_stick_y, 0.3*gamepad1.right_stick_y);
-            }
+            } else robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
         }
 
-        if (gamepad1.dpad_right) {
-            smooth = !smooth;
-        }
 
-        robot.intake.setPower(gamepad2.left_stick_y);
-        if(gamepad1.dpad_right){
+        robot.smoothIntake(gamepad2.left_stick_y);
+
+        if (gamepad2.dpad_right) {
             robot.toggleJewel();
+        }
+
+        if (gamepad2.dpad_left) {
+            robot.toggleFlipper();
         }
 
         telemetry.addData("Left Stick", gamepad1.left_stick_y);
@@ -58,7 +58,8 @@ public class Teleop extends OpMode {
         telemetry.addData("Right Power Front Position", robot.rightFront.getCurrentPosition());
         telemetry.addData("Right Power Back Position", robot.rightBack.getCurrentPosition());
 
-//        telemetry.addData("Jewel Position", robot.jewel.getPosition());
+        telemetry.addData("Jewel Position", robot.jewel.getPosition());
+        telemetry.addData("Flipper Position", robot.flipper.getPosition());
         telemetry.addData("Smooth: ", smooth);
         telemetry.update();
     }
