@@ -37,13 +37,17 @@ public class Robot {
         color = map.colorSensor.get("color");
         intakeLeft = map.dcMotor.get("intakeLeft");
         intakeRight = map.dcMotor.get("intakeRight");
-        elevatorLeft = map.dcMotor.get("elevatorLeft");
-        elevatorRight = map.dcMotor.get("elevatorRight");
+//        elevatorLeft = map.dcMotor.get("elevatorLeft");
+//        elevatorRight = map.dcMotor.get("elevatorRight");
 
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -103,8 +107,8 @@ public class Robot {
 
         this.intakeLeft.setPower(speed);
         this.intakeRight.setPower(-speed);
-        this.elevatorLeft.setPower(speed);
-        this.elevatorRight.setPower(-speed);
+//        this.elevatorLeft.setPower(speed);
+//        this.elevatorRight.setPower(-speed);
     }
 
     public void stop() {
@@ -129,10 +133,10 @@ public class Robot {
     }
 
     public void toggleFlipper() {
-        if (jewel.getPosition() == 1) {
-            jewel.setPosition(0);
+        if (flipper.getPosition() == 1) {
+            flipper.setPosition(0);
         } else {
-            jewel.setPosition(1);
+            flipper.setPosition(1);
         }
 
         jewelup = !jewelup;

@@ -77,7 +77,7 @@ public class RedJewelOnly extends LinearOpMode {
             telemetry.addData("Detected", str);
             telemetry.update();
         }
-        robot.jewel.setPosition(0);
+        robot.jewel.setPosition(1);
 
         while (opModeIsActive()) {
             robot.setDrivePower(.2);
@@ -88,7 +88,7 @@ public class RedJewelOnly extends LinearOpMode {
         }
         robot.setDrivePower(0);
         while(opModeIsActive()) {
-            robot.smoothIntake(-1);
+            robot.smoothIntake(1);
         }
         robot.smoothIntake(0);
     }
