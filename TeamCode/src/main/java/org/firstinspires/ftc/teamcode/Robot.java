@@ -10,39 +10,37 @@ public class Robot {
     //drive motors
     public DcMotor leftFront, leftBack, rightFront, rightBack;
     public DcMotor intakeLeft, intakeRight;
-    public DcMotor elevatorLeft, elevatorRight;
     public boolean activeOpmode;
 
     //jewel mechanism
     public Servo jewel, flipper;
     public ColorSensor color;
     public boolean jewelup = true;
+    HardwareMap map;
 
-    public double oldLeftSpeed = 0, oldRightSpeed = 0, oldIntakeSpeed = 0;
+    public double oldLeftSpeed = 0, oldRightSpeed = 0, oldIntakeSpeedLeft = 0, oldIntakeSpeedRight = 0;
 
     public Robot(HardwareMap map) {
-        init(map);
+        this.map = map;
     }
 
     public void init(HardwareMap map) {
         RobotMap.INCREMENT = 0.1;
         //drivetrain
-        leftFront = map.dcMotor.get("2");
-        rightFront = map.dcMotor.get("1");
-        leftBack = map.dcMotor.get("4"); // changed originally rightFront
-        rightBack = map.dcMotor.get("3");
+        leftFront = map.dcMotor.get("1");
+        leftBack = map.dcMotor.get("2"); // changed originally rightFront
+        rightFront = map.dcMotor.get("3");
+        rightBack = map.dcMotor.get("4");
 
         jewel = map.servo.get("jewelS");
         flipper = map.servo.get("Flipper");
         color = map.colorSensor.get("color");
         intakeLeft = map.dcMotor.get("intakeLeft");
         intakeRight = map.dcMotor.get("intakeRight");
-//        elevatorLeft = map.dcMotor.get("elevatorLeft");
-//        elevatorRight = map.dcMotor.get("elevatorRight");
 
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -100,15 +98,14 @@ public class Robot {
         setDrivePower(left, right);
     }
 
-    public void smoothIntake(double speed) {
-        oldIntakeSpeed = RobotMap.smoothSpeed(speed, oldIntakeSpeed, RobotMap.INCREMENT);
+    public void smoothIntake(double speedLeft, double speedRight) {
+        oldIntakeSpeedLeft = RobotMap.smoothSpeed(speedLeft, oldIntakeSpeedLeft, RobotMap.INCREMENT);
+        speedLeft = oldIntakeSpeedLeft;
+        oldIntakeSpeedRight = RobotMap.smoothSpeed(speedRight, oldIntakeSpeedRight, RobotMap.INCREMENT);
+        speedRight = oldIntakeSpeedRight;
 
-        speed = oldIntakeSpeed;
-
-        this.intakeLeft.setPower(speed);
-        this.intakeRight.setPower(-speed);
-//        this.elevatorLeft.setPower(speed);
-//        this.elevatorRight.setPower(-speed);
+        this.intakeLeft.setPower(-speedLeft);
+        this.intakeRight.setPower(speedRight);
     }
 
     public void stop() {

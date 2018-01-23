@@ -1,22 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Robot;
+/**
+ * Created by anikaitsingh on 1/13/18.
+ */
 
-
-@Autonomous(name = "Driving Time", group = "Test")
-public class DriveTime extends LinearOpMode{
-
+@TeleOp(name = "teleop")
+public class Tele extends OpMode{
     Robot robot;
 
-    public void initR(){
+    public void init() {
         robot = new Robot(this.hardwareMap);
         HardwareMap map = this.hardwareMap;
         robot.leftFront = map.dcMotor.get("1");
@@ -36,22 +34,33 @@ public class DriveTime extends LinearOpMode{
         robot.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.jewel.scaleRange(0,1);
+        robot.flipper.scaleRange(0,1);
+        robot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void runOpMode(){
-        initR();
-        waitForStart();
+    public void loop(){
+        robot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        waitForStart();
-        robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.setDrivePower(gamepad1.left_stick_y, gamepad1.right_stick_y);
 
-        ElapsedTime time = new ElapsedTime();
-        time.startTime();
-        time.reset();
-        while(opModeIsActive() && time.seconds() <=3){
-            robot.setDrivePower(-1f);
+        robot.smoothIntake(gamepad2.left_stick_y, gamepad2.right_stick_y);
+
+        if (gamepad2.dpad_left) {
+            robot.jewel.setPosition(0);
         }
 
-        robot.stop();
+        if (gamepad2.dpad_right) {
+            robot.jewel.setPosition(1);
+        }
+
+        if (gamepad2.dpad_up) {
+            robot.flipper.setPosition(0);
+        }
+
+        if(gamepad2.dpad_down){
+            robot.flipper.setPosition(1);
+        }
     }
+
 }
