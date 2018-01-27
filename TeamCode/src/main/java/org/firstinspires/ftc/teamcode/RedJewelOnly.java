@@ -135,8 +135,8 @@ public class RedJewelOnly extends LinearOpMode {
         ElapsedTime t = new ElapsedTime();
         t.startTime();
 
-        while(opModeIsActive() && t.seconds() <1){
-            robot.setDrivePower(-0.2 );
+        while (opModeIsActive() && t.seconds() < 1) {
+            robot.setDrivePower(-0.2);
         }
 
         t.reset();
@@ -146,8 +146,8 @@ public class RedJewelOnly extends LinearOpMode {
             Logging.log("roll: ", gyro.getRoll(), telemetry);
             Logging.log("pitch: ", gyro.getPitch(), telemetry);
             Logging.log("yaw: ", gyro.getYaw(), telemetry);
-            Logging.log("error", pid.err,telemetry);
-            Logging.log("target", target,telemetry);
+            Logging.log("error", pid.err, telemetry);
+            Logging.log("target", target, telemetry);
             Logging.log("Turn Condition", Math.abs(pid.err) >= RobotMap.TURN_TOLERANCE, telemetry);
 
             double pLeft = pid.getValueP(gyro.getYaw());
@@ -162,7 +162,7 @@ public class RedJewelOnly extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.smoothIntake(-1, -1);
-            robot.flipper.setPosition(-1);
+//            robot.flipper.setPosition(-1);
         }
 
     }

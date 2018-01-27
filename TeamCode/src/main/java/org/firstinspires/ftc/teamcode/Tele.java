@@ -46,19 +46,21 @@ public class Tele extends OpMode{
 
         robot.smoothIntake(gamepad2.left_stick_y, gamepad2.right_stick_y);
 
-        if (gamepad2.dpad_left) {
-            robot.jewel.setPosition(0);
-        }
-
-        if (gamepad2.dpad_right) {
+        if (gamepad2.dpad_up) {
             robot.jewel.setPosition(1);
         }
 
-        if (gamepad2.dpad_up) {
-            robot.flipper.setPosition(0);
+        if (gamepad2.dpad_down) {
+            robot.jewel.setPosition(0);
         }
 
-        if(gamepad2.dpad_down){
+        if (gamepad2.y) {
+            robot.flipper.setPosition(0);
+            robot.intakeLeft.setPower(-1);
+            robot.intakeRight.setPower(1);
+        }
+
+        if(gamepad2.a){
             robot.flipper.setPosition(1);
         }
     }
