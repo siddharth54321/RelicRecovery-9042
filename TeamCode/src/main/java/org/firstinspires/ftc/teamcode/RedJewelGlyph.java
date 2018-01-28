@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-@Autonomous(name = "Red: Jewel Only", group = "Sensor")
-public class RedJewelOnly extends LinearOpMode {
+@Autonomous(name = "Red: Jewel and Glyph", group = "Sensor")
+public class RedJewelGlyph extends LinearOpMode {
 
     ColorSensor sensorColor;
     Robot robot;

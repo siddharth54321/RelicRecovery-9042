@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Blue: Jewel Only", group = "Sensor")
-public class BlueJewelOnly extends LinearOpMode {
+@Autonomous(name = "Blue: Jewel and Park", group = "Sensor")
+public class BlueJewelPark extends LinearOpMode {
 
     ColorSensor sensorColor;
     Robot robot;
@@ -116,48 +116,5 @@ public class BlueJewelOnly extends LinearOpMode {
             }
             telemetry.update();
         }
-        robot.setDrivePower(0);
-        robot.smoothIntake(1, 1);
-        time.reset();
-        while(opModeIsActive() && time.seconds() <3)
-        robot.flipper.setPosition(0);
-
-        ElapsedTime t = new ElapsedTime();
-        t.reset();
-        while(opModeIsActive() && t.seconds() <0.1){
-            robot.setDrivePower(1);
-        }
-
-        t.reset();
-        while(opModeIsActive() && t.seconds() <0.1){
-            robot.setDrivePower(-1);
-        }
-
-        t.reset();
-
-        while(opModeIsActive() && t.seconds() < 1){
-            robot.setDrivePower(-0.5);
-        }
-
-        t.reset();
-        while(opModeIsActive() && t.seconds() < 1){
-            robot.setDrivePower(0.5);
-        }
-
-        t.reset();
-        while(opModeIsActive() && t.seconds() < 1){
-            robot.setDrivePower(-0.5);
-        }
-
-        t.reset();
-        while(opModeIsActive() && t.seconds() < 0.5){
-            robot.setDrivePower(0.5);
-        }
-
-        t.reset();
-        while(opModeIsActive() && t.seconds() < 0.2){
-            robot.setDrivePower(0.25);
-        }
-
     }
 }
