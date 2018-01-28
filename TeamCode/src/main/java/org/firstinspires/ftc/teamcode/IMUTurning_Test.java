@@ -33,6 +33,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -43,7 +45,6 @@ import org.firstinspires.ftc.teamcode.Logging;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.RobotMap;
 
-@Disabled
 @Autonomous(name = "Turn 90 test", group = "Sensor")
 public class IMUTurning_Test extends LinearOpMode
 {
@@ -57,17 +58,42 @@ public class IMUTurning_Test extends LinearOpMode
     Acceleration gravity;
 
 
-    @Override public void runOpMode() {
+    public void initR() {
+        robot = new Robot(this.hardwareMap);
+        HardwareMap map = this.hardwareMap;
+        robot.leftFront = map.dcMotor.get("1");
+        robot.leftBack = map.dcMotor.get("2"); // changed originally rightFront
+        robot.rightFront = map.dcMotor.get("3");
+        robot.rightBack = map.dcMotor.get("4");
+
+        robot.jewel = map.servo.get("jewelS");
+        robot.flipper = map.servo.get("Flipper");
+        robot.color = map.colorSensor.get("color");
+        robot.intakeLeft = map.dcMotor.get("intakeLeft");
+        robot.intakeRight = map.dcMotor.get("intakeRight");
+
+        robot.rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    @Override
+    public void runOpMode() {
 
         Gyro gyro = new Gyro(hardwareMap);
         imu = gyro.imu;
         robot = new Robot(hardwareMap);
+        initR();
+
         waitForStart();
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         PID pid = new PID(RobotMap.P_TURN);
-        double target = gyro.getYaw() - 90;//heading
+        double target = gyro.getYaw() - 90 + 15;//heading
 
         pid.setTarget(target);
 
@@ -81,9 +107,15 @@ public class IMUTurning_Test extends LinearOpMode
             Logging.log("error", pid.err,telemetry);
             Logging.log("target", target,telemetry);
             Logging.log("Turn Condition", Math.abs(pid.err) >= RobotMap.TURN_TOLERANCE, telemetry);
+
+            double pLeft = pid.getValueP(gyro.getYaw());
+            double pRight = -pid.getValueP(gyro.getYaw());
+
+            Logging.log("pLeft", pLeft, telemetry);
+            Logging.log("pRight", pLeft, telemetry);
             telemetry.update();
 
-            robot.setDrivePower(pid.getValue(gyro.getYaw()), -pid.getValue(gyro.getYaw()));
+            robot.setDrivePower(pLeft, pRight);
         }
 
         //TODO figure out which orientation
