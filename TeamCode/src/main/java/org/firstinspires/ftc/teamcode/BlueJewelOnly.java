@@ -99,7 +99,7 @@ public class BlueJewelOnly extends LinearOpMode {
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()) {
             robot.setDrivePower(power);
-            if (time.time() > 0.5) {
+            if (time.time() > 1) {
                 break;
             }
             telemetry.addData("Detected", str);
@@ -109,17 +109,55 @@ public class BlueJewelOnly extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.setDrivePower(-.2);
-            if(time.time()>5) {
+            double x = red? 4.5: 5.5;
+
+            if(time.time()>x) {
                 break;
             }
             telemetry.update();
         }
         robot.setDrivePower(0);
         robot.smoothIntake(1, 1);
-        while(opModeIsActive()) {
-            robot.smoothIntake(1, 1);
-            robot.flipper.setPosition(1);
+        time.reset();
+        while(opModeIsActive() && time.seconds() <3)
+        robot.flipper.setPosition(0);
+
+        ElapsedTime t = new ElapsedTime();
+        t.reset();
+        while(opModeIsActive() && t.seconds() <0.1){
+            robot.setDrivePower(1);
         }
-        robot.smoothIntake(0, 0);
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() <0.1){
+            robot.setDrivePower(-1);
+        }
+
+        t.reset();
+
+        while(opModeIsActive() && t.seconds() < 1){
+            robot.setDrivePower(-0.5);
+        }
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() < 1){
+            robot.setDrivePower(0.5);
+        }
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() < 1){
+            robot.setDrivePower(-0.5);
+        }
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() < 0.5){
+            robot.setDrivePower(0.5);
+        }
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() < 0.2){
+            robot.setDrivePower(0.25);
+        }
+
     }
 }

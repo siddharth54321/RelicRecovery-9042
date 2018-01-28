@@ -110,7 +110,7 @@ public class RedJewelOnly extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.setDrivePower(.2);
-            if (time.time() > 5) {
+            if (time.time() > 6) {
                 break;
             }
             telemetry.update();
@@ -126,7 +126,7 @@ public class RedJewelOnly extends LinearOpMode {
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         PID pid = new PID(RobotMap.P_TURN);
-        double target = gyro.getYaw() + 45 - 15;//heading
+        double target = gyro.getYaw() + 55 - 15;//heading
 
         pid.setTarget(target);
 
@@ -160,10 +160,66 @@ public class RedJewelOnly extends LinearOpMode {
             robot.setDrivePower(pLeft, pRight);
         }
 
-        while (opModeIsActive()) {
-            robot.smoothIntake(-1, -1);
-//            robot.flipper.setPosition(-1);
+        t.reset();
+        while (opModeIsActive() && t.seconds() < 0.4) {
+            robot.setDrivePower(1);
+            robot.smoothIntake(-0.3, -0.3);
+            robot.flipper.setPosition(1);
+        }
+        robot.setDrivePower(0);
+
+        t.reset();
+        while (opModeIsActive() && t.seconds() < 0.3){
+            robot.setDrivePower(-0.2);
+        }
+        robot.setDrivePower(0);
+
+        target = gyro.getYaw() - 65 + 15;//heading
+
+        pid.setTarget(target);
+
+        pid.getValue(gyro.getYaw());
+
+        t.reset();
+
+        // Loop and update the dashboard
+        while (opModeIsActive() && Math.abs(pid.err) >= RobotMap.TURN_TOLERANCE && t.seconds() < 3) {
+            Logging.log("roll: ", gyro.getRoll(), telemetry);
+            Logging.log("pitch: ", gyro.getPitch(), telemetry);
+            Logging.log("yaw: ", gyro.getYaw(), telemetry);
+            Logging.log("error", pid.err, telemetry);
+            Logging.log("target", target, telemetry);
+            Logging.log("Turn Condition", Math.abs(pid.err) >= RobotMap.TURN_TOLERANCE, telemetry);
+
+            double pLeft = pid.getValueP(gyro.getYaw());
+            double pRight = -pid.getValueP(gyro.getYaw());
+
+            Logging.log("pLeft", pLeft, telemetry);
+            Logging.log("pRight", pLeft, telemetry);
+            telemetry.update();
+
+            robot.setDrivePower(pLeft, pRight);
         }
 
+        t.reset();
+
+        while(opModeIsActive() && t.seconds() < 0.4){
+            robot.setDrivePower(-0.5);
+        }
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() < 0.4){
+            robot.setDrivePower(0.5);
+        }
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() < 0.4){
+            robot.setDrivePower(-0.5);
+        }
+
+        t.reset();
+        while(opModeIsActive() && t.seconds() < 0.25){
+            robot.setDrivePower(0.20);
+        }
     }
 }
