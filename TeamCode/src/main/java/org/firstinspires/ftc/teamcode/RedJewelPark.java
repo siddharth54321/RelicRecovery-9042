@@ -5,25 +5,48 @@ import android.graphics.Color;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-@Disabled
-@Autonomous(name = "Blue: Jewel Auton", group = "Sensor")
-public class JewelAutonBlue extends LinearOpMode {
+@Autonomous(name = "Red: Jewel and Park", group = "Sensor")
+public class RedJewelPark extends LinearOpMode {
 
     ColorSensor sensorColor;
     Robot robot;
+    BNO055IMU imu;
+
+    public void initR() {
+        robot = new Robot(this.hardwareMap);
+        HardwareMap map = this.hardwareMap;
+        robot.leftFront = map.dcMotor.get("1");
+        robot.leftBack = map.dcMotor.get("2"); // changed originally rightFront
+        robot.rightFront = map.dcMotor.get("3");
+        robot.rightBack = map.dcMotor.get("4");
+
+        robot.jewel = map.servo.get("jewelS");
+        robot.flipper = map.servo.get("Flipper");
+        robot.color = map.colorSensor.get("color");
+        robot.intakeLeft = map.dcMotor.get("intakeLeft");
+        robot.intakeRight = map.dcMotor.get("intakeRight");
+
+        robot.rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
 
     @Override
     public void runOpMode() {
-        robot = new Robot(this.hardwareMap);
+        initR();
 
         sensorColor = hardwareMap.get(ColorSensor.class, "color");
         sensorColor.enableLed(true);
@@ -31,9 +54,6 @@ public class JewelAutonBlue extends LinearOpMode {
         final float values[] = hsvValues;
         final double SCALE_FACTOR = 255;
         waitForStart();
-
-
-
 
         boolean red = false;
 
@@ -46,9 +66,10 @@ public class JewelAutonBlue extends LinearOpMode {
 
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR), (int) (sensorColor.green() * SCALE_FACTOR), (int) (sensorColor.blue() * SCALE_FACTOR), hsvValues);
 
-            red = hsvValues[0] < 25 || hsvValues[0] > 330;
+            red = hsvValues[0] < 30 || hsvValues[0] > 330;
             if (red) str = "red";
             else str = "not red";
+
 
             // send the info back to driver station using telemetry function.
             telemetry.addData("Alpha", sensorColor.alpha());
@@ -60,7 +81,7 @@ public class JewelAutonBlue extends LinearOpMode {
             telemetry.addData("Servo Position", robot.jewel.getPosition());
             telemetry.update();
 
-            if (time.time() > 1) break;
+            if (time.seconds() > 3) break;
         }
 
 
@@ -68,10 +89,10 @@ public class JewelAutonBlue extends LinearOpMode {
         telemetry.update();
 
         double power;
-        if(red){
-            power = -.2;
-        }else{
+        if (red) {
             power = .2;
+        } else {
+            power = -.2;
         }
 
         //for testing purposes
@@ -79,72 +100,21 @@ public class JewelAutonBlue extends LinearOpMode {
         robot.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (opModeIsActive()) {
             robot.setDrivePower(power);
-            if(time.time()>0.5) break;
-
+            if (time.time() > 0.5) {
+                break;
+            }
             telemetry.addData("Detected", str);
             telemetry.update();
         }
         robot.jewel.setPosition(1);
 
         while (opModeIsActive()) {
-            robot.setDrivePower(power);
-            if(time.time()> 5){
+            robot.setDrivePower(.2);
+            if (time.time() > 6) {
                 break;
             }
-            telemetry.addData("Detected", str);
             telemetry.update();
         }
-
         robot.setDrivePower(0);
-
-        time.reset();
-        robot.setDrivePower(-power);
-        if(red){
-            while(time.seconds() < 0.3) {
-                telemetry.addData("Time", time.seconds());
-            }
-        }else{
-            time.reset();
-            Gyro gyro = new Gyro(hardwareMap);
-            BNO055IMU imu = gyro.imu;
-            robot = new Robot(hardwareMap);
-            waitForStart();
-
-            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-            //TODO figure out why there is a 13 degree error
-            double target = imu.getAngularOrientation().firstAngle - 90;//heading
-
-            double error = target- gyro.getYaw();
-
-            // Loop and update the dashboard
-            while (opModeIsActive() && Math.abs(error) >= RobotMap.TURN_TOLERANCE) {
-                error = target - gyro.getYaw();
-                Logging.log("roll: ", gyro.getRoll(), telemetry);
-                Logging.log("pitch: ", gyro.getPitch(), telemetry);
-                Logging.log("yaw: ", gyro.getYaw(), telemetry);
-                Logging.log("error: ", error, telemetry);
-                telemetry.update();
-                robot.smoothIntake(-1,-1);
-                robot.setDrivePower(error*RobotMap.P_TURN, -error*RobotMap.P_TURN);
-            }
-
-            robot.setDrivePower(power);
-            while (time.seconds() < 0.3 && opModeIsActive()) {
-                telemetry.addData("Time", time.seconds());
-            }
-
-            robot.setDrivePower(-power);
-            while (time.seconds() < 0.3 && opModeIsActive()) {
-                telemetry.addData("Time", time.seconds());
-            }
-        }
-
-        robot.setDrivePower(0);
-
-        while(opModeIsActive()){
-            robot.jewel.setPosition(1);
-        }
-
     }
 }
