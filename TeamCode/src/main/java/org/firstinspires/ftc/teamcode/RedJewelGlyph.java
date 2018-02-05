@@ -106,7 +106,7 @@ public class RedJewelGlyph extends LinearOpMode {
             telemetry.addData("Detected", str);
             telemetry.update();
         }
-        robot.jewel.setPosition(1);
+        robot.jewel.setPosition(0.9);
 
         while (opModeIsActive()) {
             robot.setDrivePower(.2);

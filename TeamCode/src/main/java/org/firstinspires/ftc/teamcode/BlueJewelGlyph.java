@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Blue: Jewel and Glyph", group = "Sensor")
+@Autonomous(name = "Blue: Jewel  and Glyph", group = "Sensor")
 public class BlueJewelGlyph extends LinearOpMode {
 
     ColorSensor sensorColor;
@@ -105,7 +105,7 @@ public class BlueJewelGlyph extends LinearOpMode {
             telemetry.addData("Detected", str);
             telemetry.update();
         }
-        robot.jewel.setPosition(1);
+        robot.jewel.setPosition(0.9);
 
         while (opModeIsActive()) {
             robot.setDrivePower(-.2);
